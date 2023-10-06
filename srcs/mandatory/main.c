@@ -17,6 +17,10 @@ int	main(int argc, char *argv[])
 	t_data		data;
 	t_img_data	*canvas;
 
+	if (argc != 2)
+		return (print_errors(ERR_ARGS));
+	if (parse_info(argv[1]))
+		return (print_errors(ERR_PARSING));
 	init_data(&data);
 	canvas = get_canvas(&data, MAIN);
 	mlx_put_image_to_window(data.mlx_ptr, data.win.ptr, canvas->ptr, 0, 0);
