@@ -20,3 +20,9 @@ void	init_data(t_data *data)
 		return (print_errors(ERR_MEMORY), free_data(data), exit(ERROR));
 	init_window(data);
 }
+
+void	init(t_cubdata *cub)
+{
+	ft_bzero(&cub->map, sizeof(t_map));
+	init_data(&cub->data);
+}

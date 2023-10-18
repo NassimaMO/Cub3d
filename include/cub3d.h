@@ -21,7 +21,14 @@
 
 typedef struct s_cubdata {
 	t_data	data; 
+	t_map	map;
 }	t_cubdata;
+
+typedef struct s_map {
+	int	width;
+	int height;
+	int	**tab;
+}	t_map;
 
 /* init.c */
 void	init_window(t_data *data);
@@ -35,5 +42,8 @@ int		print_errors(int n);
 
 /* parsing.c */
 int		parse_info(char *path);
+
+/* free.c */
+void    free_cubdata(t_cubdata *cub);
 
 #endif

@@ -34,8 +34,6 @@ int	parse_textures(char *line)
 			line++;
 		while (ft_isspace(*line))
 			line++;
-		if (ft_strchr(line, '\n'))
-			*ft_strchr(line, '\n') = 0;
 		if (i < 4 && open(line, O_RDONLY) < 0)
 			return (ERR_PARSING);
 		if (i == 6)
@@ -44,13 +42,42 @@ int	parse_textures(char *line)
 	return (bool_end == 6);
 }
 
-int	parse_map(char *line)
+int	parse_map_wall(t_cubdata *cub, char *path)
 {
-	(void)line;
+	int	i;
+	int	fd;
+	char *str;
+
+	i = 0;
+	cub->map.tab = malloc(cub->map.height * sizeof(int *));
+	while (i < cub->map.height)
+		cub->map.tab[i++] = malloc(cub->map.width * sizeof(int));
+	fd = open(path, O_RDONLY);
+	str = get_next_line(fd);
+	while (str)
+	{
+		i = 0;
+		while (str[i])
+		{
+			cub->map.tab[i] = ft_atoi(str[i++]);
+		}
+	}
+}
+
+int	parse_map_char(char *line, t_cubdata *cub)
+{
+	int	i;
+
+	i = 0;
+	while (line[i] && (line[i] == '0' || line[i] == '1' || line[i] == 'N' \
+			|| line[i] == 'S' || line[i] == 'E' || line[i] == 'W'))
+		i++;
+	if (line[i])
+		return (ERR_PARSING);
 	return (0);
 }
 
-int	parse_info(char *path)
+int	parse_info(char *path, t_cubdata *cub)
 {
 	char	*line;
 	int		fd;
@@ -61,7 +88,7 @@ int	parse_info(char *path)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		return (ERR_PARSING);
-	line = get_next_line(fd);
+	line = gnl_wraper(fd);
 	while (line)
 	{
 		parse = f(line);
@@ -69,9 +96,13 @@ int	parse_info(char *path)
 			return (free(line), close(fd), ERR_PARSING);
 		if (f == parse_textures && parse == 1)
 			f = parse_map;
-		free(line);
-		line = get_next_line(fd);
+		if (f == parse_map)
+		{
+			if (cub->map.width < ft_strlen(line))
+				cub->map.width = ft_strlen(line);
+			cub->map.height++;
+		}
+		line = (free(line), gnl_wraper(fd));
 	}
-	close(fd);
-	return (0);
+	return (close(fd), 0);
 }

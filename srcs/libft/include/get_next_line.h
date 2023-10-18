@@ -34,5 +34,6 @@ int		gnl_close(int fd);
 
 /* get_next_line_utils.c */
 int		gnl_strlen(char *str);
+char	*gnl_wraper(int fd);
 
 #endif

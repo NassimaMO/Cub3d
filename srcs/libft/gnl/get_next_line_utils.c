@@ -23,3 +23,13 @@ int	gnl_strlen(char *str)
 		i--;
 	return (i);
 }
+
+char	*gnl_wraper(int fd)
+{
+	char	*str;
+
+	str = get_next_line(fd);
+	if (ft_strchr(str, '\n'))
+		*ft_strchr(str, '\n') = 0;
+	return (str);
+}
