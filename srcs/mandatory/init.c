@@ -9,7 +9,7 @@ void	init_window(t_data *data)
 	if (data->win.ptr)
 		alloc_canvas(data, data->win.width, data->win.height, MAIN);
 	else
-        return (free_data(data), exit(print_errors(ERR_MEMORY)));
+		return (free_data(data), exit(print_errors(ERR_MEMORY)));
 }
 
 void	init_data(t_data *data)
@@ -21,8 +21,39 @@ void	init_data(t_data *data)
 	init_window(data);
 }
 
-void	init(t_cubdata *cub)
+int	fill_map(t_cubdata *cub, int fd)
 {
-	ft_bzero(&cub->map, sizeof(t_map));
-	init_data(&cub->data);
+	size_t	i;
+	int		j;
+	char	*str;
+
+	if (fd < 0)
+		return (ERR_PARSING);
+	i = 0;
+	cub->map.tab = malloc(cub->map.height * sizeof(int *));
+	while (i < cub->map.height)
+		cub->map.tab[i++] = malloc(cub->map.width * sizeof(int));
+	str = gnl_wraper(fd);
+	i = 0;
+	while (str)
+	{
+		j = 0;
+		while (str[j])
+		{
+			cub->map.tab[i][j] = ft_atoi(str + j);
+			j++;
+		}
+		str = (i++, free(str), gnl_wraper(fd));
+	}
+	return (close(fd));
+}
+
+int	fill_data(char *path, t_cubdata *cub)
+{
+	int	fd;
+
+	fd = open(path, O_RDONLY);
+	if (fd < 0)
+		return (ERR_PARSING);
+	return (fill_map(cub, fd));
 }

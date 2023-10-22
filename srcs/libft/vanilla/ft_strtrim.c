@@ -12,15 +12,6 @@
 
 #include "vanilla.h"
 
-static int	ft_isspace(char c)
-{
-	if (c == '\t' || c == '\n' || c == '\f' || c == '\v' || c == '\r')
-		return (1);
-	else if (c == ' ')
-		return (1);
-	return (0);
-}
-
 static int	char_in_set(const char *set, char c)
 {
 	int	i;

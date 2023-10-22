@@ -44,24 +44,24 @@ t_img_data *canvas)
 	t_list		*changes;
 
 	changes = NULL;
-	alloc_c(&changes, transf_c(&resize, ORIGINAL, font->size, font->size));
-	alloc_c(&changes, transf_c(&recolor, font->color));
+	alloc_c(&changes, transf_c(&resize, &(font->size), font->size, ORIGINAL));
+	alloc_c(&changes, transf_c(&recolor, 0, 0, font->color));
 	img = new_image(data, c, &changes, &path_font);
 	image_put(canvas, img, transf_point(font->x, font->y), TRANSP);
 	font->x += img->width;
 	ft_lstclear(&changes, &free);
 }
 
-static int	font_width(t_data *data, int font_height)
+static int	font_width(t_data *data, t_font *font)
 {
 	t_img_data	*img;
-	t_list		*list;
+	t_list		*changes;
 
-	list = NULL;
-	img = new_image(data, 'A', NULL, &path_font);
-	alloc_c(&list, transf_c(&resize, ORIGINAL, img->width, font_height));
-	img = new_image(data, 'A', &list, &path_font);
-	ft_lstclear(&list, &free);
+	changes = NULL;
+	alloc_c(&changes, transf_c(&resize, &(font->size), font->size, ORIGINAL));
+	alloc_c(&changes, transf_c(&recolor, 0, 0, font->color));
+	img = new_image(data, 'A', &changes, &path_font);
+	ft_lstclear(&changes, &free);
 	return (img->width);
 }
 
@@ -76,7 +76,7 @@ void	put_img_str(t_data *data, char *str, t_font font, t_img_data *canvas)
 	while (str[i])
 	{
 		if (str[i] == ' ' && ++i)
-			font.x += font_width(data, font.size);
+			font.x += font_width(data, &font);
 		else if (str[i] == '\n' && ++i)
 		{
 			font.x = start;

@@ -64,11 +64,7 @@ void	*dup_change(void *change)
 	new = malloc(sizeof(t_changes));
 	if (!new)
 		return (NULL);
-	new->ptr = ref->ptr;
-	new->p1 = ref->p1;
-	new->p2 = ref->p2;
-	new->p3 = ref->p3;
-	new->p4 = ref->p4;
+	*new = *ref;
 	return (new);
 }
 

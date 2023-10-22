@@ -17,6 +17,7 @@
 # include "mlx.h"
 # include "mlx_int.h"
 # include "libft.h"
+# include <math.h>
 
 # define NUM_PATH "./images/numbers/"
 # define FONT_PATH "./images/font/"
@@ -61,6 +62,7 @@ typedef struct s_data {
 
 typedef struct s_img_data {
 	void	*ptr;
+	void	*mlx_ptr;
 	int		width;
 	int		height;
 	char	*addr;
@@ -72,17 +74,24 @@ typedef struct s_img_data {
 }	t_img_data;
 
 typedef struct s_changes {
-	void	*ptr;
-	int		p1;
-	int		p2;
-	int		p3;
-	int		p4;
+	void	*f;
+	int		new_width;
+	int		new_height;
+	int		canvas_id;
+	union {
+		int		scale;
+		int		color;
+		int		direction;
+		int		alpha_lvl;
+		t_point	start;
+	};
 }	t_changes;
 
 typedef struct s_param {
 	t_data		*data;
 	t_img_data	*img;
 	t_img_data	*new_img;
+	t_img_data	*canvas;
 }	t_param;
 
 typedef struct s_font {
@@ -95,8 +104,8 @@ typedef struct s_font {
 /* pixel.c */
 void		my_mlx_pixel_put(t_img_data *img, int x, int y, int color);
 void		background_pix(t_img_data *canvas, int color);
-void		background_gradient(t_img_data *canvas, \
-					int start_color, int end_color, int param);
+void		background_gradient(t_img_data *canvas, int start, int end, \
+															int parameter);
 void		image_put(t_img_data *canvas, t_img_data *img, t_point a, int p);
 void		put_canvas(t_data *data, int id_src, int id_dest);
 
@@ -121,10 +130,8 @@ void		multisuppr(t_list **list, t_changes ref, int nb);
 int			count_common(t_list *list1, t_list *list2, int (f)(void *, void *));
 
 /* iter_img.c */
-t_param		transf_p(t_data *data, t_img_data *img, t_img_data *new_img);
-int			get_width(t_img_data *img, t_changes *changes);
-int			get_height(t_img_data *img, t_changes *changes);
-void		apply_f(t_param *p, t_changes *changes, int i, int j);
+t_param		transf_p(t_data *data, t_img_data *img, t_img_data *new_img, \
+															t_changes *changes);
 void		iter_img(t_data *data, t_img_data *img, t_changes *changes);
 
 /* lst_utils.c */
@@ -136,24 +143,21 @@ int			count_equal(t_list *list, void *ptr, int (equal_f)(void *, void *));
 void		merge_changes(t_list **changes);
 
 /* other_changes_func.c */
-void		rotate(t_param *p, t_changes *changes, int i, int j);
-void		invert(t_param *p, t_changes *changes, int i, int j);
-void		cut(t_param *p, t_changes *changes, int i, int j);
-void		recolor(t_param *p, t_changes *changes, int i, int j);
+void		rotate(t_param p, t_changes *changes, int i, int j);
+void		invert(t_param p, t_changes *changes, int i, int j);
+void		cut(t_param p, t_changes *changes, int i, int j);
+void		recolor(t_param p, t_changes *changes, int i, int j);
 
 /* resize.c */
-void		resize(t_param *p, t_changes *changes, int i, int j);
+void		resize(t_param p, t_changes *changes, int i, int j);
 
 /* transparency.c */
 int			add_color(unsigned int dest, unsigned int src, int alpha_lvl);
-int			average_color(int status, unsigned int pixel);
-int			get_pix(t_img_data *canvas, ...);
-void		alpha(t_param *p, t_changes *changes, int i, int j);
+int			average_color(int status, unsigned int pixel, int *sum, int *n);
+void		alpha(t_param p, t_changes *changes, int i, int j);
 
 /* utils.c */
-int			ft_max(int nb, ...);
-int			ft_min(int nb, ...);
-void		ft_init(int nb, ...);
+void		ft_init(int *n1, int *n2, int *n3, int *n4);
 t_point		transf_point(int x, int y);
 void		center_coord(int *width, int *height, t_img_data *img);
 
@@ -178,7 +182,8 @@ void		init_img(t_data *data, t_img_data *img, int id, \
 													char *(fpath)(int ));
 int			init_canvas(t_data *data, t_img_data *canvas, \
 													int width, int height);
-t_changes	transf_c(void (f)(t_param *, t_changes *, int, int), ...);
+t_changes	transf_c(void (f)(t_param, t_changes *, int, int), \
+											const void *p1, int p2, int p3);
 t_font		transf_font(int x, int y, int size, int color);
 
 #endif

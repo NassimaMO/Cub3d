@@ -20,16 +20,17 @@ int	main(int argc, char *argv[])
 
 	if (argc != 2)
 		return (print_errors(ERR_ARGS));
-	if (parse_info(argv[1]))
+	ft_bzero(&cub.map, sizeof(t_map));
+	if (parse_info(argv[1], &cub))
 		return (print_errors(ERR_PARSING));
 	data = &cub.data;
-	init_data(&data);
-	canvas = get_canvas(&data, MAIN);
-	mlx_put_image_to_window(data.mlx_ptr, data.win.ptr, canvas->ptr, 0, 0);
-	mlx_loop_hook(data.mlx_ptr, &no_input, &data);
-	mlx_hook(data.win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, &data);
-	mlx_hook(data.win.ptr, KeyPress, KeyPressMask, &input, &data);
-	mlx_loop(data.mlx_ptr);
+	init_data(data);
+	canvas = get_canvas(data, MAIN);
+	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
+	mlx_loop_hook(data->mlx_ptr, &no_input, data);
+	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
+	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, data);
+	mlx_loop(data->mlx_ptr);
 	free_cubdata(&cub);
 	return (0);
 }

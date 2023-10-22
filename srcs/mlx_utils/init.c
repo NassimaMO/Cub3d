@@ -28,6 +28,7 @@ void	init_img(t_data *data, t_img_data *img, int id, char *(fpath)(int ))
 	img->addr = mlx_get_data_addr(img->ptr, &(img->bpp), \
 	&(img->line_length), &(img->endian));
 	img->changes = NULL;
+	img->mlx_ptr = data->mlx_ptr;
 	free(path);
 }
 
@@ -43,28 +44,36 @@ int	init_canvas(t_data *data, t_img_data *canvas, int width, int height)
 	canvas->height = height;
 	ft_memset(canvas->addr, -1, canvas->line_length * canvas->height);
 	canvas->changes = NULL;
+	canvas->mlx_ptr = data->mlx_ptr;
 	return (1);
 }
 
-t_changes	transf_c(void (f)(t_param *, t_changes *, int, int), ...)
+t_changes	transf_c(void (f)(t_param, t_changes *, int, int), \
+										const void *p1, int p2, int p3)
 {
-	va_list		args;
 	t_changes	change;
 
-	ft_bzero(&change, sizeof(t_changes));
-	change.ptr = f;
-	if (!f)
-		return (change);
-	va_start(args, f);
-	change.p1 = va_arg(args, int);
-	if (f == &cut || f == &alpha || f == &resize)
+	change.f = (ft_bzero(&change, sizeof(t_changes)), f);
+	if (f == &resize)
 	{
-		change.p2 = va_arg(args, int);
-		change.p3 = va_arg(args, int);
-		if (f != &resize)
-			change.p4 = va_arg(args, int);
+		change.new_width = *((int *)p1);
+		change.new_height = p2;
+		change.scale = p3;
 	}
-	va_end(args);
+	if (f == &recolor)
+		change.color = p3;
+	if (f == &alpha)
+		change.canvas_id = p2;
+	if (f == &alpha)
+		change.alpha_lvl = p3;
+	if (f == &rotate || f == &invert)
+		change.direction = p3;
+	if (f == &cut)
+	{
+		change.start = transf_point(((t_point *)p1)->x, ((t_point *)p1)->y);
+		change.new_width = p2;
+		change.new_height = p3;
+	}
 	return (change);
 }
 

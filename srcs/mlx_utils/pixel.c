@@ -38,23 +38,23 @@ void	background_pix(t_img_data *canvas, int color)
 	}
 }
 
-void	background_gradient(t_img_data *canvas, int start, int end, int param)
+void	background_gradient(t_img_data *canvas, int start, int end, int p)
 {
 	int				i;
 	int				j;
 	unsigned int	color;
 
 	i = 0;
-	if (param != HOR && param != VER)
-		param = VER;
+	if (p != HOR && p != VER)
+		p = VER;
 	while (i < canvas->height)
 	{
 		j = 0;
 		while (j < canvas->width)
 		{
-			if (param == HOR)
+			if (p == HOR)
 				color = add_color(start, end, 100 * (float)j / canvas->width);
-			if (param == VER)
+			if (p == VER)
 				color = add_color(start, end, 100 * (float)i / canvas->height);
 			my_mlx_pixel_put(canvas, j, i, color);
 			j++;

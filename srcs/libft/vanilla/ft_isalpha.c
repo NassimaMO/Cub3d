@@ -18,3 +18,10 @@ int	ft_isalpha(int c)
 		return (0);
 	return (1024);
 }
+
+int	ft_isspace(char c)
+{
+	if (c == ' ' || (9 <= c && c <= 13))
+		return (1);
+	return (0);
+}

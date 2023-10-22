@@ -17,13 +17,9 @@ static void	merge_invert(t_changes *change, t_list *element, t_list **list)
 	t_changes	*ref;
 
 	ref = element->content;
-	if (ref->ptr != &invert)
+	if (ref->f != &invert)
 		return ;
-	if ((ref->p1 == change->p1) || (change->p1 == RIGHT && ref->p1 == LEFT) || \
-		(change->p1 == LEFT && ref->p1 == RIGHT))
-		ft_lstsuppr(list, element, &free);
-	else if ((change->p1 == UP && ref->p1 == DOWN) || \
-	(change->p1 == DOWN && ref->p1 == UP))
+	if (ref->direction == change->direction)
 		ft_lstsuppr(list, element, &free);
 	else
 		ft_lstadd_back(list, ft_lstnew(dup_change(change)));
@@ -37,16 +33,16 @@ static void	merge_rotate(t_changes *change, t_list *element, t_list **list)
 	if (count_equal(*list, ref, &is_equal_changes) == 2)
 	{
 		multisuppr(list, *ref, 2);
-		if (change->p1 == CLOCKW)
-			change->p1 = ANTICLOCKW;
-		else if (change->p1 == ANTICLOCKW)
-			change->p1 = CLOCKW;
+		if (change->direction == CLOCKW)
+			change->direction = ANTICLOCKW;
+		else if (change->direction == ANTICLOCKW)
+			change->direction = CLOCKW;
 		ft_lstadd_back(list, ft_lstnew(dup_change(change)));
 		if (count_equal(*list, ft_lstlast(*list), &is_equal_changes) == 2)
 			merge_rotate(change, ft_lstlast(*list), list);
 	}
-	else if ((change->p1 == CLOCKW && ref->p1 == ANTICLOCKW) || \
-	(change->p1 == ANTICLOCKW && ref->p1 == CLOCKW))
+	else if ((change->direction == CLOCKW && ref->direction == ANTICLOCKW) \
+	|| (change->direction == ANTICLOCKW && ref->direction == CLOCKW))
 		ft_lstsuppr(list, element, &free);
 	else
 		ft_lstadd_back(list, ft_lstnew(dup_change(change)));
@@ -57,18 +53,18 @@ static void	merge_change(t_changes *change, t_list *element, t_list **list)
 	t_changes	*ref;
 
 	ref = element->content;
-	if (ref->ptr == &recolor || ref->ptr == &resize)
+	if (ref->f == &recolor || ref->f == &resize)
 		*ref = *change;
-	else if (ref->ptr == &invert)
+	else if (ref->f == &invert)
 		merge_invert(change, element, list);
-	else if (ref->ptr == &rotate)
+	else if (ref->f == &rotate)
 		merge_rotate(change, element, list);
-	else if (ref->ptr == &cut)
+	else if (ref->f == &cut)
 	{
-		ref->p1 = ft_max(2, ref->p1, change->p1);
-		ref->p2 = ft_max(2, ref->p2, change->p2);
-		ref->p3 = ft_min(2, ref->p3, change->p3);
-		ref->p4 = ft_min(2, ref->p4, change->p4);
+		ref->new_width = fmin(ref->new_width, change->new_width);
+		ref->new_height = fmin(ref->new_height, change->new_height);
+		ref->start.x = fmax(ref->start.x, change->start.x);
+		ref->start.y = fmax(ref->start.y, change->start.y);
 	}
 }
 

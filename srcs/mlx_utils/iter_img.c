@@ -12,81 +12,66 @@
 
 #include "mlx_utils.h"
 
-t_param	transf_p(t_data *data, t_img_data *img, t_img_data *new_img)
+t_param	transf_p(t_data *data, t_img_data *img, t_img_data *new_img, \
+															t_changes *changes)
 {
 	t_param	p;
 
 	p.data = data;
 	p.img = img;
 	p.new_img = new_img;
+	if (changes->f == &alpha)
+		p.canvas = get_canvas(data, changes->canvas_id);
+	else
+		p.canvas = NULL;
 	return (p);
 }
 
-int	get_width(t_img_data *img, t_changes *changes)
+void	correct_changes(t_img_data *img, t_changes *c)
 {
-	if (changes->ptr == &resize)
-		return (changes->p2);
-	if (changes->ptr == &cut)
-		return (changes->p3);
-	if (changes->ptr == &rotate)
-		return (img->height);
-	return (img->width);
-}
-
-int	get_height(t_img_data *img, t_changes *changes)
-{
-	if (changes->ptr == &resize)
-		return (changes->p3);
-	if (changes->ptr == &cut)
-		return (changes->p4);
-	if (changes->ptr == &rotate)
-		return (img->width);
-	return (img->height);
-}
-
-void	apply_f(t_param *p, t_changes *changes, int i, int j)
-{
-	void	(*f)(t_param *, t_changes *, int, int);
-	int		width;
-	int		height;
-	t_list	*old_changes;
-
-	f = changes->ptr;
-	width = get_width(p->img, changes);
-	height = get_height(p->img, changes);
-	old_changes = p->new_img->changes;
-	if (i == 0 && j == 0 && changes->ptr != &resize)
+	if (c->f == &resize && c->scale == ORIGINAL)
 	{
-		init_canvas(p->data, p->new_img, width, height);
-		p->new_img->changes = old_changes;
+		if (c->new_width == fmin(c->new_width, \
+		(img->width * c->new_height) / img->height))
+			c->new_height = (img->height * c->new_width) / img->width;
+		else
+			c->new_width = (img->width * c->new_height) / img->height;
 	}
-	(*f)(p, changes, i, j);
+	if (c->f == &rotate)
+	{
+		c->new_height = img->width;
+		c->new_width = img->height;
+	}
+	if (!c->new_width)
+		c->new_width = img->width;
+	if (!c->new_height)
+		c->new_height = img->height;
 }
 
 void	iter_img(t_data *data, t_img_data *img, t_changes *changes)
 {
 	int			i;
 	int			j;
-	t_param		p;
 	t_img_data	new_img;
+	void		(*f)(t_param, t_changes *, int, int);
 
 	if (!img || !img->ptr)
 		return ;
-	new_img = *img;
-	p = transf_p(data, img, &new_img);
+	correct_changes(img, changes);
+	init_canvas(data, &new_img, changes->new_width, changes->new_height);
+	new_img.id = img->id;
 	i = 0;
-	while (i < get_height(img, changes))
+	f = changes->f;
+	while (i < changes->new_height)
 	{
 		j = 0;
-		while (j < get_width(img, changes))
+		while (j < changes->new_width)
 		{
-			apply_f(&p, changes, i, j);
+			(*f)(transf_p(data, img, &new_img, changes), changes, i, j);
 			j++;
 		}
 		i++;
 	}
-	XDestroyImage(((t_img *)(img->ptr))->image);
-	free(img->ptr);
-	if (img)
-		*(img) = (alloc_c(&(new_img.changes), *changes), new_img);
+	new_img.changes = (alloc_c(&(img->changes), *changes), img->changes);
+	*img = (mlx_destroy_image(data->mlx_ptr, img->ptr), new_img);
 }

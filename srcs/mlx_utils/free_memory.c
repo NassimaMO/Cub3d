@@ -18,11 +18,7 @@ void	free_img(void *p)
 
 	img = p;
 	if (img->ptr)
-	{
-		if (((t_img *)(img->ptr))->image)
-			XDestroyImage(((t_img *)(img->ptr))->image);
-		free(img->ptr);
-	}
+		mlx_destroy_image(img->mlx_ptr, img->ptr);
 	if (img->changes)
 		ft_lstclear(&(img->changes), &free);
 }

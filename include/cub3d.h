@@ -19,20 +19,21 @@
 
 # define MAIN 1
 
+typedef struct s_map {
+	size_t	width;
+	size_t	height;
+	int		**tab;
+}	t_map;
+
 typedef struct s_cubdata {
 	t_data	data; 
 	t_map	map;
 }	t_cubdata;
 
-typedef struct s_map {
-	int	width;
-	int height;
-	int	**tab;
-}	t_map;
-
 /* init.c */
 void	init_window(t_data *data);
 void	init_data(t_data *data);
+void	init(t_cubdata *cub);
 
 /* input.c */
 int		input(int key, t_data *data);
@@ -41,9 +42,9 @@ int		input(int key, t_data *data);
 int		print_errors(int n);
 
 /* parsing.c */
-int		parse_info(char *path);
+int		parse_info(char *path, t_cubdata *cub);
 
 /* free.c */
-void    free_cubdata(t_cubdata *cub);
+void	free_cubdata(t_cubdata *cub);
 
 #endif

@@ -14,26 +14,35 @@
 
 int	is_equal_changes(void *struct1, void *struct2)
 {
-	if (((t_changes *)struct1)->ptr != ((t_changes *)struct2)->ptr)
+	t_changes	*c1;
+	t_changes	*c2;
+	void		(*f)(t_param, t_changes *, int, int);
+	void		(*f2)(t_param, t_changes *, int, int);
+
+	c1 = struct1;
+	c2 = struct2;
+	f = c1->f;
+	f2 = c2->f;
+	if (f != f2)
 		return (0);
-	if (((t_changes *)struct1)->ptr == &resize && \
-		((((t_changes *)struct1)->p1 == ORIGINAL || \
-		((t_changes *)struct2)->p1 == ORIGINAL) && \
-		(((t_changes *)struct1)->p2 == ((t_changes *)struct2)->p2 || \
-		(((t_changes *)struct1)->p2 == ((t_changes *)struct2)->p2))))
-		return (1);
-	else if (((t_changes *)struct1)->p1 != ((t_changes *)struct2)->p1)
+	if (c1->new_width != c2->new_width)
 		return (0);
-	else if (((t_changes *)struct1)->p2 != ((t_changes *)struct2)->p2)
+	if (c1->new_height != c2->new_height)
 		return (0);
-	else if (((t_changes *)struct1)->p3 != ((t_changes *)struct2)->p3)
+	if (f == &resize && c1->scale != c2->scale)
+		return (0);
+	if (f == &cut && (c1->start.x != c2->start.x || c1->start.y != c2->start.y))
+		return (0);
+	if (f == &recolor && c1->color != c2->color)
+		return (0);
+	if ((f == &invert || f == &rotate) && c1->direction != c2->direction)
 		return (0);
 	return (1);
 }
 
 int	is_same_changes(void *struct1, void *struct2)
 {
-	if (((t_changes *)struct1)->ptr == ((t_changes *)struct2)->ptr)
+	if (((t_changes *)struct1)->f == ((t_changes *)struct2)->f)
 		return (1);
 	return (0);
 }

@@ -12,65 +12,20 @@
 
 #include "mlx_utils.h"
 
-int	ft_max(int nb, ...)
+void	ft_init(int *n1, int *n2, int *n3, int *n4)
 {
-	int		i;
-	va_list	args;
-	int		n;
-	int		max;
-
-	i = 0;
-	va_start(args, nb);
-	while (i < nb)
-	{
-		n = va_arg(args, int);
-		if (i == 0)
-			max = n;
-		else if (n > max)
-			max = n;
-		i++;
-	}
-	va_end(args);
-	return (max);
-}
-
-int	ft_min(int nb, ...)
-{
-	int		i;
-	va_list	args;
-	int		n;
-	int		min;
-
-	i = 0;
-	va_start(args, nb);
-	while (i < nb)
-	{
-		n = va_arg(args, int);
-		if (i == 0)
-			min = n;
-		else if (n < min)
-			min = n;
-		i++;
-	}
-	va_end(args);
-	return (min);
-}
-
-void	ft_init(int nb, ...)
-{
-	int		i;
-	va_list	args;
-	int		*n;
-
-	i = 0;
-	va_start(args, nb);
-	while (i < nb)
-	{
-		n = va_arg(args, int *);
-		*n = 0;
-		i++;
-	}
-	va_end(args);
+	if (n1 == NULL)
+		return ;
+	*n1 = 0;
+	if (n2 == NULL)
+		return ;
+	*n2 = 0;
+	if (n3 == NULL)
+		return ;
+	*n3 = 0;
+	if (n4 == NULL)
+		return ;
+	*n4 = 0;
 }
 
 t_point	transf_point(int x, int y)

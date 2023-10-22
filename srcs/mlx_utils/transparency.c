@@ -34,61 +34,46 @@ int	add_color(unsigned int dest, unsigned int src, int alpha_lvl)
 	return (n);
 }
 
-int	average_color(int status, unsigned int pixel)
+int	average_color(int status, unsigned int pixel, int *sum, int *n)
 {
-	static int	a_sum = 0;
-	static int	r_sum = 0;
-	static int	g_sum = 0;
-	static int	b_sum = 0;
-	static int	n = 0;
-
-	if (status == END)
-	{
-		if (n != 0)
-			n = ((a_sum / n) << 8 * 3) + ((r_sum / n) << 8 * 2) + \
-			((g_sum / n) << 8 * 1) + b_sum / n;
-		return (n);
-	}
 	if (status == START)
 	{
-		return (ft_init(5, &a_sum, &r_sum, &g_sum, &b_sum, &n), n);
+		sum[0] = 0;
+		sum[1] = 0;
+		sum[2] = 0;
+		sum[3] = 0;
+		*n = 0;
+		return (0);
 	}
-	a_sum += pixel >> 8 * 3;
-	r_sum += (pixel << 8 * 1) >> 8 * 3;
-	g_sum += (pixel << 8 * 2) >> 8 * 3;
-	b_sum += (pixel << 8 * 3) >> 8 * 3;
-	return (++n);
+	if (status == END)
+	{
+		if (*n != 0)
+			return (((sum[0] / *n) << 8 * 3) + ((sum[1] / *n) << 8 * 2) + \
+			((sum[2] / *n) << 8 * 1) + sum[3] / *n);
+		return (0);
+	}
+	sum[0] += pixel >> 8 * 3;
+	sum[1] += (pixel << 8 * 1) >> 8 * 3;
+	sum[2] += (pixel << 8 * 2) >> 8 * 3;
+	sum[3] += (pixel << 8 * 3) >> 8 * 3;
+	(*n)++;
+	return (0);
 }
 
-int	get_pix(t_img_data *canvas, ...)
+/* using : changes->alpha_lvl, changes->canvas_id */
+void	alpha(t_param p, t_changes *changes, int i, int j)
 {
-	va_list			args;
-	int				x;
-	int				y;
-	int				i;
-	int				j;
+	int	img_pix;
+	int	bg_pix;
 
-	va_start(args, canvas);
-	x = va_arg(args, int);
-	y = va_arg(args, int);
-	i = va_arg(args, int);
-	j = va_arg(args, int);
-	va_end(args);
-	j = ((int *)canvas->addr)[(y + i) * canvas->width + x + j];
-	return (j);
-}
-
-/* expecting changes->p1=canvas_id, ->p2=x, ->p3=y, ->p4=alpha_level) */
-void	alpha(t_param *p, t_changes *changes, int i, int j)
-{
-	t_img_data	*canvas;
-	int			pix;
-
-	canvas = get_canvas(p->data, changes->p1);
-	pix = ((int *)p->img->addr)[i * p->img->width + j];
-	if (pix >= 0)
-		((int *)p->new_img->addr)[i * p->img->width + j] = add_color(pix, \
-		get_pix(canvas, changes->p2, changes->p3, i, j), changes->p4);
+	img_pix = ((int *)p.img->addr)[i * p.img->width + j];
+	if (img_pix >= 0)
+	{
+		bg_pix = ((int *)p.canvas->addr)[(changes->new_height + i) * \
+							p.canvas->width + (changes->new_width + j)];
+		((int *)p.new_img->addr)[i * p.img->width + j] = \
+							add_color(img_pix, bg_pix, changes->alpha_lvl);
+	}
 	else
-		((int *)p->new_img->addr)[i * p->img->width + j] = pix;
+		((int *)p.new_img->addr)[i * p.img->width + j] = img_pix;
 }
