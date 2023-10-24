@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 12:15:25 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/09/23 12:15:37 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:57:04 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ int	main(int argc, char *argv[])
 		return (print_errors(ERR_PARSING));
 	data = &cub.data;
 	init_data(data);
+	fill_data(argv[1], &cub);
+	print_map(&cub.map);
 	canvas = get_canvas(data, MAIN);
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);

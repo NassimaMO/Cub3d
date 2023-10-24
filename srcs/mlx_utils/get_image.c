@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_image.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 17:48:09 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/10/30 17:48:10 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:05:20 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,13 +77,13 @@ t_img_data	*get_close_image(t_data *data, int id, t_list *changes)
 }
 
 t_img_data	*alloc_new_image(t_data *data, \
-								t_img_data *img_ref, int id, char *(f)(int ))
+								t_img_data *img_ref, int id, char *path)
 {
 	t_img_data	*img;
 	t_point		a;
 
 	if (!img_ref)
-		img = alloc_img(data, id, f);
+		img = alloc_img(data, id, path);
 	else
 	{
 		img = malloc(sizeof(t_img_data));
@@ -100,14 +100,14 @@ t_img_data	*alloc_new_image(t_data *data, \
 	return (img);
 }
 
-t_img_data	*new_image(t_data *data, int id, t_list **changes, char *(f)(int ))
+t_img_data	*new_image(t_data *data, int id, t_list **changes, char *path)
 {
 	t_img_data	*img;
 	t_img_data	*new_img;
 	t_list		*ptr;
 
 	if (!changes || !*changes || !(*changes)->content)
-		return (alloc_new_image(data, NULL, id, f));
+		return (alloc_new_image(data, NULL, id, path));
 	merge_changes(changes);
 	ptr = *changes;
 	if (get_image(data, id, ptr))
@@ -117,7 +117,7 @@ t_img_data	*new_image(t_data *data, int id, t_list **changes, char *(f)(int ))
 	{
 		if (!img || !is_in_list(ptr->content, img->changes, &is_equal_changes))
 		{
-			new_img = alloc_new_image(data, img, id, f);
+			new_img = alloc_new_image(data, img, id, path);
 			if (!new_img)
 				return (ft_lstclear(changes, &free), NULL);
 			iter_img(data, new_img, ptr->content);

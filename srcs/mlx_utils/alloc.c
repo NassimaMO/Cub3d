@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   alloc.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/31 11:12:22 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/10/31 11:12:23 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:03:51 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mlx_utils.h"
 
-t_img_data	*alloc_img(t_data *data, int id, char *(fpath)(int ))
+t_img_data	*alloc_img(t_data *data, int id, char *path)
 {
 	t_img_data	*img;
 	t_list		*ptr;
@@ -25,7 +25,7 @@ t_img_data	*alloc_img(t_data *data, int id, char *(fpath)(int ))
 	if (!ptr)
 		return (free(img), NULL);
 	ft_lstadd_back(&(data->imgs), ptr);
-	init_img(data, img, id, fpath);
+	init_img(data, img, id, path);
 	if (!img->ptr)
 	{
 		ft_lstsuppr(&(data->imgs), ft_lstlast(data->imgs), &free);

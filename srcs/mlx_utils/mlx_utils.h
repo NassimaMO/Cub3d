@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mlx_utils.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 17:40:15 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/10/30 17:40:16 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:06:20 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,9 +119,9 @@ t_img_data	*get_canvas(t_data *data, int id);
 t_img_data	*get_image(t_data *data, int id, t_list *changes);
 t_img_data	*get_close_image(t_data *data, int id, t_list *changes);
 t_img_data	*alloc_new_image(t_data *data, t_img_data *img_ref, \
-											int id, char *(fpath)(int ));
+											int id, char *path);
 t_img_data	*new_image(t_data *data, int id, t_list **changes, \
-													char *(fpath)(int ));
+													char *path);
 
 /* img_changes_utils.c */
 int			is_equal_changes(void *struct1, void *struct2);
@@ -167,7 +167,7 @@ int			no_input(t_data *data);
 int			input_escape(int key, t_data *data);
 
 /* alloc.c */
-t_img_data	*alloc_img(t_data *data, int id, char *(fpath)(int ));
+t_img_data	*alloc_img(t_data *data, int id, char *path);
 int			alloc_canvas(t_data *data, int width, int height, int id);
 void		*dup_change(void *change);
 int			alloc_c(t_list **list, t_changes changes);
@@ -179,7 +179,7 @@ void		free_data(t_data *data);
 
 /* init.c */
 void		init_img(t_data *data, t_img_data *img, int id, \
-													char *(fpath)(int ));
+													char *path);
 int			init_canvas(t_data *data, t_img_data *canvas, \
 													int width, int height);
 t_changes	transf_c(void (f)(t_param, t_changes *, int, int), \

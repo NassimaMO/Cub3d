@@ -3,33 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/31 11:12:29 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/10/31 11:12:30 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:58:02 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "mlx_utils.h"
 
-void	init_img(t_data *data, t_img_data *img, int id, char *(fpath)(int ))
+void	init_img(t_data *data, t_img_data *img, int id, char *path)
 {
-	char	*path;
-
 	ft_bzero(img, sizeof(t_img_data));
-	path = fpath(id);
 	img->id = id;
 	if (!path)
 		return ;
 	img->ptr = mlx_xpm_file_to_image(data->mlx_ptr, path, \
 	&(img->width), &(img->height));
 	if (!img->ptr)
-		return (free(path));
+		return ;
 	img->addr = mlx_get_data_addr(img->ptr, &(img->bpp), \
 	&(img->line_length), &(img->endian));
 	img->changes = NULL;
 	img->mlx_ptr = data->mlx_ptr;
-	free(path);
 }
 
 int	init_canvas(t_data *data, t_img_data *canvas, int width, int height)

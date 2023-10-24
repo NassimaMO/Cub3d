@@ -63,7 +63,7 @@ int	parse_info(char *path, t_cubdata *cub)
 			f = parse_map_char;
 		if (f == parse_map_char && cub->map.width < ft_strlen(line))
 			cub->map.width = ft_strlen(line);
-		if (f == parse_map_char)
+		if (f == parse_map_char && *line)
 			cub->map.height++;
 		line = (free(line), gnl_wraper(fd));
 	}
@@ -72,6 +72,38 @@ int	parse_info(char *path, t_cubdata *cub)
 
 int	parse_map_walls(t_map *map)
 {
-	(void)map;
+	size_t	i;
+	size_t	j;
+	size_t	k;
+	int	bool_;
+
+	i = 0;
+	while (i < map->height - 1)
+	{
+		j = 0;
+		while (j < map->width)
+		{
+			if (map->tab[i][j] == 1)
+			{
+				k = j;
+				if (j != 0)
+					k--;
+				while (map->tab[i][j] == 1)
+					j++;
+				bool_ = 0;
+				while (k < j + 1)
+				{
+					if (map->tab[i + 1][j] == 1)
+						bool_ = 1;
+					k++;
+				}
+				if (!bool_)
+					return (ERR_PARSING);
+				break ;
+			}
+			j++;
+		}
+		i++;
+	}
 	return (0);
 }

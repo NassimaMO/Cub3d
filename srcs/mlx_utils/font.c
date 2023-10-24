@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   font.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/30 17:56:48 by nghulam-          #+#    #+#             */
-/*   Updated: 2022/10/30 17:56:49 by nghulam-         ###   ########.fr       */
+/*   Updated: 2023/10/24 18:38:55 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ t_img_data *canvas)
 	changes = NULL;
 	alloc_c(&changes, transf_c(&resize, &(font->size), font->size, ORIGINAL));
 	alloc_c(&changes, transf_c(&recolor, 0, 0, font->color));
-	img = new_image(data, c, &changes, &path_font);
+	img = new_image(data, c, &changes, path_font(c));
 	image_put(canvas, img, transf_point(font->x, font->y), TRANSP);
 	font->x += img->width;
 	ft_lstclear(&changes, &free);
@@ -60,7 +60,7 @@ static int	font_width(t_data *data, t_font *font)
 	changes = NULL;
 	alloc_c(&changes, transf_c(&resize, &(font->size), font->size, ORIGINAL));
 	alloc_c(&changes, transf_c(&recolor, 0, 0, font->color));
-	img = new_image(data, 'A', &changes, &path_font);
+	img = new_image(data, 'A', &changes, path_font('A'));
 	ft_lstclear(&changes, &free);
 	return (img->width);
 }
