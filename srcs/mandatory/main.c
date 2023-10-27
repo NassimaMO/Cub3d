@@ -27,6 +27,8 @@ int	main(int argc, char *argv[])
 	init_data(data);
 	fill_data(argv[1], &cub);
 	print_map(&cub.map);
+	if (parse_walls_1(&cub.map))
+		return (free_cubdata(&cub), print_errors(ERR_PARSING));
 	canvas = get_canvas(data, MAIN);
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);

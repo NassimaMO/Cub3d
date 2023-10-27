@@ -67,41 +67,57 @@ int	parse_info(char *path, t_cubdata *cub)
 			cub->map.height++;
 		line = (free(line), gnl_wraper(fd));
 	}
-	return (close(fd));
+	return (cub->map.height--, close(fd));
 }
 
-int	parse_map_walls(t_map *map)
+int	parse_walls_1(t_map *map)
 {
-	size_t	i;
-	size_t	j;
-	size_t	k;
-	int	bool_;
+	int	i;
+	int	j;
+	int	k;
 
 	i = 0;
-	while (i < map->height - 1)
+	while (i < (int)map->height - 1)
 	{
 		j = 0;
-		while (j < map->width)
+		while (j < (int)map->width)
 		{
 			if (map->tab[i][j] == 1)
 			{
-				k = j;
-				if (j != 0)
-					k--;
-				while (map->tab[i][j] == 1)
+				k = j - (j != 0);
+				while (j < (int)map->width && map->tab[i][j] == 1)
 					j++;
-				bool_ = 0;
-				while (k < j + 1)
+				while (k < j - (j == (int)map->width))
 				{
-					if (map->tab[i + 1][j] == 1)
-						bool_ = 1;
+					if (map->tab[i + 1][k] == 1)
+						break ;
 					k++;
 				}
-				if (!bool_)
+				if (k == j - (j == (int)map->width))
 					return (ERR_PARSING);
 				break ;
 			}
 			j++;
+		}
+		j = (int)map->width - 1;
+		while (j >= 0)
+		{
+			if (map->tab[i][j] == 1)
+			{
+				k = j + (j != (int)map->width - 1);
+				while (j >= 0 && map->tab[i][j] == 1)
+					j--;
+				while (k > j + (j == -1))
+				{
+					if (map->tab[i + 1][k] == 1)
+						break ;
+					k--;
+				}
+				if (k == j + (j == -1))
+					return (ERR_PARSING);
+				break ;
+			}
+			j--;
 		}
 		i++;
 	}

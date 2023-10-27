@@ -51,6 +51,7 @@ void	print_map(t_map *map);
 
 /* parsing.c */
 int		parse_info(char *path, t_cubdata *cub);
+int		parse_walls_1(t_map *map);
 
 /* free.c */
 void	free_cubdata(t_cubdata *cub);

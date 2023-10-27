@@ -52,7 +52,7 @@ int	fill_map(t_cubdata *cub, int fd)
 
 int	pixel(unsigned char r, unsigned char g, unsigned char b)
 {
-	int pix;
+	int	pix;
 
 	pix = 0;
 	pix = (r << (8 * 2)) + (g << 8) + b;
