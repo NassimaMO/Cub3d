@@ -59,15 +59,16 @@ int	parse_info(char *path, t_cubdata *cub)
 		parse = f(line);
 		if (parse < 0)
 			return (free(line), close(fd), ERR_PARSING);
+		if (f == parse_map_char && (size_t)cub->map.width < ft_strlen(line))
+			cub->map.width = ft_strlen(line);
+		if (f == parse_map_char && !is_all_space(line))
+			cub->map.height++;
 		if (f == parse_textures && parse == 1)
 			f = parse_map_char;
-		if (f == parse_map_char && cub->map.width < ft_strlen(line))
-			cub->map.width = ft_strlen(line);
-		if (f == parse_map_char && *line)
-			cub->map.height++;
 		line = (free(line), gnl_wraper(fd));
 	}
-	return (cub->map.height--, close(fd));
+	ft_printf("%d\n", cub->map.height);
+	return (close(fd));
 }
 
 int	parse_walls_1(t_map *map)
@@ -121,5 +122,59 @@ int	parse_walls_1(t_map *map)
 		}
 		i++;
 	}
+	return (0);
+}
+
+int	check_player(t_map *map)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < map->height)
+	{
+		j = 0;
+		while (j < map->width)
+		{
+			if (map->tab[i][j] == NO ||
+				map->tab[i][j] == SO ||
+				map->tab[i][j] == WE ||
+				map->tab[i][j] == EA)
+				return (bt_player(map, i, j));
+			j++;
+		}
+		i++;
+	}
+	return (-1);
+}
+
+int	bt_player(t_map *map, int i, int j)
+{
+	if (j + 1 < map->width && map->tab[i][j + 1] == 0)
+	{
+		map->tab[i][j + 1] = 2;
+		if (bt_player(map, i, j + 1))
+			return (ERR_PARSING);
+	}
+	if (j - 1 >= 0 && map->tab[i][j - 1] == 0)
+	{
+		map->tab[i][j - 1] = 2;
+		if (bt_player(map, i, j - 1))
+			return (ERR_PARSING);
+	}
+	if (i + 1 < map->height && map->tab[i + 1][j] == 0)
+	{
+		map->tab[i + 1][j] = 2;
+		if (bt_player(map, i + 1, j))
+			return (ERR_PARSING);
+	}
+	if (i - 1 >= 0 && map->tab[i - 1][j] == 0)
+	{
+		map->tab[i - 1][j] = 2;
+		if (bt_player(map, i - 1, j))
+			return (ERR_PARSING);
+	}
+	if (j + 1 >= map->width || j - 1 < 0 || i + 1 >= map->height || i - 1 < 0)
+		return (ERR_PARSING);
 	return (0);
 }

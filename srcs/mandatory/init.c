@@ -21,9 +21,9 @@ void	init_data(t_data *data)
 	init_window(data);
 }
 
-int	fill_map(t_cubdata *cub, int fd)
+int	fill_map(t_cubdata *cub, char *first_line, int fd)
 {
-	size_t	i;
+	int	i;
 	int		j;
 	char	*str;
 	char	tmp[2];
@@ -34,15 +34,24 @@ int	fill_map(t_cubdata *cub, int fd)
 	cub->map.tab = ft_calloc(cub->map.height, sizeof(int *));
 	while (i < cub->map.height)
 		cub->map.tab[i++] = ft_calloc(cub->map.width, sizeof(int));
-	str = (ft_bzero(tmp, sizeof(char) * 2), gnl_wraper(fd));
+	str = (ft_bzero(tmp, sizeof(char) * 2), first_line);
 	i = 0;
 	while (str)
 	{
 		j = 0;
-		while (str[j])
+		while (i < cub->map.height && str[j])
 		{
 			tmp[0] = str[j];
-			cub->map.tab[i][j] = ft_atoi(tmp);
+			if ('N' == tmp[0])
+				cub->map.tab[i][j] = NO;
+			else if ('S' == tmp[0])
+				cub->map.tab[i][j] = SO;
+			else if ('W' == tmp[0])
+				cub->map.tab[i][j] = WE;
+			else if ('E' == tmp[0])
+				cub->map.tab[i][j] = EA;
+			else
+				cub->map.tab[i][j] = ft_atoi(tmp);
 			j++;
 		}
 		str = (i++, free(str), gnl_wraper(fd));
@@ -57,6 +66,20 @@ int	pixel(unsigned char r, unsigned char g, unsigned char b)
 	pix = 0;
 	pix = (r << (8 * 2)) + (g << 8) + b;
 	return (pix);
+}
+
+int	is_all_space(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (!ft_isspace(str[i]))
+			return (0);
+		i++;
+	}
+	return (i);
 }
 
 int	fill_data(char *path, t_cubdata *cub)
@@ -94,7 +117,9 @@ int	fill_data(char *path, t_cubdata *cub)
 		ft_atoi(ft_strchr(line, ',') + 1), ft_atoi(ft_strrchr(line, ',') + 1)));
 		line = (free(line), gnl_wraper(fd));
 	}
-	if (line)
-		free(line);
-	return (fill_map(cub, fd));
+	if (!line)
+		return (ERR_PARSING);
+	while (line && is_all_space(line))
+		line = (free(line), gnl_wraper(fd));
+	return (fill_map(cub, line, fd));
 }

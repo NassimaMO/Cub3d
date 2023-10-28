@@ -17,22 +17,23 @@
 # define ERR_ARGS -3
 # define ERR_PARSING -4
 
-# define NO 1
-# define SO 2
-# define WE 3
-# define EA 4
+# define NO 3
+# define SO 4
+# define WE 5
+# define EA 6
 
 # define MAIN 1
 
 typedef struct s_map {
-	size_t	width;
-	size_t	height;
+	int	width;
+	int	height;
 	int		**tab;
 }	t_map;
 
 typedef struct s_cubdata {
 	t_data	data; 
 	t_map	map;
+	t_map	valid_map;
 	int		f_color;
 	int		c_color;
 }	t_cubdata;
@@ -41,6 +42,7 @@ typedef struct s_cubdata {
 void	init_window(t_data *data);
 void	init_data(t_data *data);
 int		fill_data(char *path, t_cubdata *cub);
+int		is_all_space(char *str);
 
 /* input.c */
 int		input(int key, t_data *data);
@@ -52,6 +54,8 @@ void	print_map(t_map *map);
 /* parsing.c */
 int		parse_info(char *path, t_cubdata *cub);
 int		parse_walls_1(t_map *map);
+int		check_player(t_map *map);
+int		bt_player(t_map *map, int i, int j);
 
 /* free.c */
 void	free_cubdata(t_cubdata *cub);

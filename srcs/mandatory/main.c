@@ -6,7 +6,7 @@
 /*   By: nmouslim <nmouslim@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/23 12:15:25 by nghulam-          #+#    #+#             */
-/*   Updated: 2023/10/24 18:57:04 by nmouslim         ###   ########.fr       */
+/*   Updated: 2023/10/28 15:57:56 by nmouslim         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	main(int argc, char *argv[])
 	init_data(data);
 	fill_data(argv[1], &cub);
 	print_map(&cub.map);
-	if (parse_walls_1(&cub.map))
+	if (check_player(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
 	canvas = get_canvas(data, MAIN);
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);

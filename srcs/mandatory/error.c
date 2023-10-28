@@ -15,8 +15,8 @@ int	print_errors(int n)
 
 void	print_map(t_map *map)
 {
-	size_t	i;
-	size_t	j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (i < map->height)

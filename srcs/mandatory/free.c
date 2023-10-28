@@ -2,7 +2,7 @@
 
 void	free_cubdata(t_cubdata *cub)
 {
-	size_t	i;
+	int	i;
 
 	i = 0;
 	if (cub->map.tab)
