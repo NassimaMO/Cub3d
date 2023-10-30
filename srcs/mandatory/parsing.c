@@ -61,68 +61,13 @@ int	parse_info(char *path, t_cubdata *cub)
 			return (free(line), close(fd), ERR_PARSING);
 		if (f == parse_map_char && (size_t)cub->map.width < ft_strlen(line))
 			cub->map.width = ft_strlen(line);
-		if (f == parse_map_char && !is_all_space(line))
+		if (f == parse_map_char && fns(line) >= 0)
 			cub->map.height++;
 		if (f == parse_textures && parse == 1)
 			f = parse_map_char;
 		line = (free(line), gnl_wraper(fd));
 	}
-	ft_printf("%d\n", cub->map.height);
 	return (close(fd));
-}
-
-int	parse_walls_1(t_map *map)
-{
-	int	i;
-	int	j;
-	int	k;
-
-	i = 0;
-	while (i < (int)map->height - 1)
-	{
-		j = 0;
-		while (j < (int)map->width)
-		{
-			if (map->tab[i][j] == 1)
-			{
-				k = j - (j != 0);
-				while (j < (int)map->width && map->tab[i][j] == 1)
-					j++;
-				while (k < j - (j == (int)map->width))
-				{
-					if (map->tab[i + 1][k] == 1)
-						break ;
-					k++;
-				}
-				if (k == j - (j == (int)map->width))
-					return (ERR_PARSING);
-				break ;
-			}
-			j++;
-		}
-		j = (int)map->width - 1;
-		while (j >= 0)
-		{
-			if (map->tab[i][j] == 1)
-			{
-				k = j + (j != (int)map->width - 1);
-				while (j >= 0 && map->tab[i][j] == 1)
-					j--;
-				while (k > j + (j == -1))
-				{
-					if (map->tab[i + 1][k] == 1)
-						break ;
-					k--;
-				}
-				if (k == j + (j == -1))
-					return (ERR_PARSING);
-				break ;
-			}
-			j--;
-		}
-		i++;
-	}
-	return (0);
 }
 
 int	check_player(t_map *map)
@@ -136,10 +81,8 @@ int	check_player(t_map *map)
 		j = 0;
 		while (j < map->width)
 		{
-			if (map->tab[i][j] == NO ||
-				map->tab[i][j] == SO ||
-				map->tab[i][j] == WE ||
-				map->tab[i][j] == EA)
+			if (map->tab[i][j] == 'N' || map->tab[i][j] == 'S' || \
+				map->tab[i][j] == 'W' || map->tab[i][j] == 'E')
 				return (bt_player(map, i, j));
 			j++;
 		}

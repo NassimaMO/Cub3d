@@ -21,54 +21,108 @@ void	init_data(t_data *data)
 	init_window(data);
 }
 
-int	fill_map(t_cubdata *cub, char *first_line, int fd)
+void	free_tab(int **tab, int size)
 {
 	int	i;
+
+	i = 0;
+	while (i < size)
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
+
+int	alloc_map(t_map *map)
+{
+	int	i;
+
+	i = 0;
+	map->tab = ft_calloc(map->height, sizeof(int *));
+	if (!map->tab)
+		return (ERR_MEMORY);
+	while (i < map->height)
+	{
+		map->tab[i] = ft_calloc(map->width, sizeof(int));
+		if (!map->tab[i])
+			return (free_tab(map->tab, i), ERR_MEMORY);
+		i++;
+	}
+	return (0);
+}
+
+void	init_player(t_player *player, int i, int j, char c)
+{
+	if (c == 'N')
+	{
+		player->direction.x = 0;
+		player->direction.y = 1;
+	}
+	if (c == 'S')
+	{
+		player->direction.x = 0;
+		player->direction.y = -1;
+	}
+	if (c == 'W')
+	{
+		player->direction.x = -1;
+		player->direction.y = 0;
+	}
+	if (c == 'E')
+	{
+		player->direction.x = 1;
+		player->direction.y = 0;
+	}
+	player->direction.z = 0;
+	player->position.x = j;
+	player->position.y = i;
+	player->position.z = 0;
+}
+
+int	fill_map(t_cubdata *cub, char *first_line, int fd)
+{
+	int		i;
 	int		j;
-	char	*str;
+	char	*s;
 	char	tmp[2];
 
-	if (fd < 0)
+	if (!first_line || alloc_map(&cub->map))
 		return (ERR_PARSING);
-	i = 0;
-	cub->map.tab = ft_calloc(cub->map.height, sizeof(int *));
-	while (i < cub->map.height)
-		cub->map.tab[i++] = ft_calloc(cub->map.width, sizeof(int));
-	str = (ft_bzero(tmp, sizeof(char) * 2), first_line);
-	i = 0;
-	while (str)
+	s = (ft_bzero(tmp, 2), ft_bzero(&i, sizeof(int)), first_line);
+	while (s)
 	{
 		j = 0;
-		while (i < cub->map.height && str[j])
+		while (i < cub->map.height && s[j])
 		{
-			tmp[0] = str[j];
-			if ('N' == tmp[0])
-				cub->map.tab[i][j] = NO;
-			else if ('S' == tmp[0])
-				cub->map.tab[i][j] = SO;
-			else if ('W' == tmp[0])
-				cub->map.tab[i][j] = WE;
-			else if ('E' == tmp[0])
-				cub->map.tab[i][j] = EA;
+			tmp[0] = s[j];
+			if (s[j] == 'N' || s[j] == 'S' || s[j] == 'W' || s[j] == 'E')
+			{
+				cub->map.tab[i][j] = s[j];
+				init_player(&cub->player, i, j, s[j]);
+			}
 			else
 				cub->map.tab[i][j] = ft_atoi(tmp);
 			j++;
 		}
-		str = (i++, free(str), gnl_wraper(fd));
+		s = (i++, free(s), gnl_wraper(fd));
 	}
 	return (close(fd));
 }
 
-int	pixel(unsigned char r, unsigned char g, unsigned char b)
+int	pixel(char *str)
 {
-	int	pix;
+	int	r;
+	int	g;
+	int	b;
 
-	pix = 0;
-	pix = (r << (8 * 2)) + (g << 8) + b;
-	return (pix);
+	r = ft_atoi(ft_strchr(str, ' '));
+	g =  ft_atoi(ft_strchr(str, ',') + 1);
+	b = ft_atoi(ft_strrchr(str, ',') + 1);
+	return ((r << (8 * 2)) + (g << 8) + b);
 }
 
-int	is_all_space(char *str)
+int	fns(char *str)
 {
 	int	i;
 
@@ -76,10 +130,10 @@ int	is_all_space(char *str)
 	while (str[i])
 	{
 		if (!ft_isspace(str[i]))
-			return (0);
+			return (i);
 		i++;
 	}
-	return (i);
+	return (-1);
 }
 
 int	fill_data(char *path, t_cubdata *cub)
@@ -87,39 +141,26 @@ int	fill_data(char *path, t_cubdata *cub)
 	int		fd;
 	int		i;
 	char	*line;
-	char	*texture;
 
 	fd = open(path, O_RDONLY);
-	if (fd < 0)
-		return (ERR_PARSING);
-	line = gnl_wraper(fd);
-	i = 0;
+	line = (ft_bzero(&i, sizeof(int)), gnl_wraper(fd));
 	while (line && i < 6)
 	{
-		texture = ft_strchr(line, '.');
-		if (texture)
-		{
-			if (!ft_strncmp("NO", line, 2))
-				new_image(&cub->data, NO, NULL, texture);
-			else if (!ft_strncmp("SO", line, 2))
-				new_image(&cub->data, SO, NULL, texture);
-			else if (!ft_strncmp("WE", line, 2))
-				new_image(&cub->data, WE, NULL, texture);
-			else if (!ft_strncmp("EA", line, 2))
-				new_image(&cub->data, EA, NULL, texture);
-			i++;
-		}
-		else if (!ft_strncmp("F", line, 1))
-			cub->f_color = (i++, pixel(ft_atoi(ft_strchr(line, ' ')), \
-		ft_atoi(ft_strchr(line, ',') + 1), ft_atoi(ft_strrchr(line, ',') + 1)));
-		else if (!ft_strncmp("C", line, 1))
-			cub->c_color = (i++, pixel(ft_atoi(ft_strchr(line, ' ')), \
-		ft_atoi(ft_strchr(line, ',') + 1), ft_atoi(ft_strrchr(line, ',') + 1)));
+		if (!ft_strncmp("NO", line, 2) && ++i)
+			new_image(&cub->data, 'N', NULL, line + fns(ft_strchr(line, ' ')));
+		else if (!ft_strncmp("SO", line, 2) && ++i)
+			new_image(&cub->data, 'S', NULL, line + fns(ft_strchr(line, ' ')));
+		else if (!ft_strncmp("WE", line, 2) && ++i)
+			new_image(&cub->data, 'W', NULL, line + fns(ft_strchr(line, ' ')));
+		else if (!ft_strncmp("EA", line, 2) && ++i)
+			new_image(&cub->data, 'E', NULL, line + fns(ft_strchr(line, ' ')));
+		else if (!ft_strncmp("F", line, 1) && ++i)
+			cub->f_color = pixel(line);
+		else if (!ft_strncmp("C", line, 1) && ++i)
+			cub->f_color = pixel(line);
 		line = (free(line), gnl_wraper(fd));
 	}
-	if (!line)
-		return (ERR_PARSING);
-	while (line && is_all_space(line))
+	while (line && fns(line) < 0)
 		line = (free(line), gnl_wraper(fd));
 	return (fill_map(cub, line, fd));
 }

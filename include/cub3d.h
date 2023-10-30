@@ -5,6 +5,7 @@
 # include "mlx_int.h"
 # include "libft.h"
 # include "mlx_utils.h"
+# include "math.h"
 
 # include <stdio.h>
 
@@ -17,32 +18,43 @@
 # define ERR_ARGS -3
 # define ERR_PARSING -4
 
-# define NO 3
-# define SO 4
-# define WE 5
-# define EA 6
-
 # define MAIN 1
+
+# define FOV 70
+# define WALL 
 
 typedef struct s_map {
 	int	width;
 	int	height;
-	int		**tab;
+	int	**tab;
 }	t_map;
 
+typedef struct s_coord {
+	int	x;
+	int	y;
+	int	z;
+}	t_coord;
+
+typedef struct s_player {
+	t_coord	position;
+	t_coord	direction;
+	int		fov;
+}	t_player;
+
 typedef struct s_cubdata {
-	t_data	data; 
-	t_map	map;
-	t_map	valid_map;
-	int		f_color;
-	int		c_color;
+	t_data		data; 
+	t_map		map;
+	t_map		valid_map;
+	int			f_color;
+	int			c_color;
+	t_player	player;
 }	t_cubdata;
 
 /* init.c */
 void	init_window(t_data *data);
 void	init_data(t_data *data);
 int		fill_data(char *path, t_cubdata *cub);
-int		is_all_space(char *str);
+int		fns(char *str);
 
 /* input.c */
 int		input(int key, t_data *data);
