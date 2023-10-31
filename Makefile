@@ -30,7 +30,7 @@ INC_FLAG				=	$(addprefix -I,$(INC_DIR) $(LIBMLX_DIR) $(LIBFT_DIR)/include $(LIB
 LINK_FLAG				=	-L$(LIBMLX_UTILS_DIR) -lmlx_utils -lm -L$(LIBFT_DIR) -lft -L$(LIBMLX_DIR) -lmlx -lXext -lX11 -lXrender
 
 
-COMMON_FILES			=	input.c init.c error.c parsing.c free.c
+COMMON_FILES			=	error.c init.c input.c memory.c parsing.c utils.c
 
 MANDATORY_FILES			=	$(COMMON_FILES) main.c
 

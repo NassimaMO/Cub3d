@@ -1,7 +1,11 @@
 #include "cub3d.h"
 
-void	init_window(t_data *data)
+void	init_data(t_data *data)
 {
+	ft_bzero(data, sizeof(t_data));
+	data->mlx_ptr = mlx_init();
+	if (!data->mlx_ptr)
+		return (print_errors(ERR_MEMORY), free_data(data), exit(ERROR));
 	mlx_get_screen_size(data->mlx_ptr, &(data->win.width), \
 	&(data->win.height));
 	data->win.ptr = \
@@ -12,47 +16,7 @@ void	init_window(t_data *data)
 		return (free_data(data), exit(print_errors(ERR_MEMORY)));
 }
 
-void	init_data(t_data *data)
-{
-	ft_bzero(data, sizeof(t_data));
-	data->mlx_ptr = mlx_init();
-	if (!data->mlx_ptr)
-		return (print_errors(ERR_MEMORY), free_data(data), exit(ERROR));
-	init_window(data);
-}
-
-void	free_tab(int **tab, int size)
-{
-	int	i;
-
-	i = 0;
-	while (i < size)
-	{
-		free(tab[i]);
-		i++;
-	}
-	free(tab);
-}
-
-int	alloc_map(t_map *map)
-{
-	int	i;
-
-	i = 0;
-	map->tab = ft_calloc(map->height, sizeof(int *));
-	if (!map->tab)
-		return (ERR_MEMORY);
-	while (i < map->height)
-	{
-		map->tab[i] = ft_calloc(map->width, sizeof(int));
-		if (!map->tab[i])
-			return (free_tab(map->tab, i), ERR_MEMORY);
-		i++;
-	}
-	return (0);
-}
-
-void	init_p(t_player *player, int i, int j, char c)
+static void	init_p(t_player *player, int i, int j, char c)
 {
 	if (c == 'N')
 	{
@@ -80,7 +44,7 @@ void	init_p(t_player *player, int i, int j, char c)
 	player->position.z = 0;
 }
 
-int	fill_map(t_cubdata *cub, char *first_line, int fd)
+static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 {
 	int		i;
 	int		j;
@@ -107,7 +71,7 @@ int	fill_map(t_cubdata *cub, char *first_line, int fd)
 	return (close(fd));
 }
 
-int	pixel(char *str)
+static int	pixel(char *str)
 {
 	int	r;
 	int	g;
@@ -117,20 +81,6 @@ int	pixel(char *str)
 	g = ft_atoi(ft_strchr(str, ',') + 1);
 	b = ft_atoi(ft_strrchr(str, ',') + 1);
 	return ((r << (8 * 2)) + (g << 8) + b);
-}
-
-int	fns(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (!ft_isspace(str[i]))
-			return (i);
-		i++;
-	}
-	return (-1);
 }
 
 int	fill_data(char *path, t_cubdata *cub)

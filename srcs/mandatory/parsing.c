@@ -70,6 +70,35 @@ int	parse_info(char *path, t_cubdata *cub)
 	return (close(fd));
 }
 
+static int	backtracking(t_map *map, int i, int j)
+{
+	if (j + 1 < map->width && map->tab[i][j + 1] == 0)
+	{
+		map->tab[i][j + 1] = 2;
+		if (backtracking(map, i, j + 1))
+			return (ERR_PARSING);
+	}
+	if (j - 1 >= 0 && map->tab[i][j - 1] == 0)
+	{
+		map->tab[i][j - 1] = 2;
+		if (backtracking(map, i, j - 1))
+			return (ERR_PARSING);
+	}
+	if (i + 1 < map->height && map->tab[i + 1][j] == 0)
+	{
+		map->tab[i + 1][j] = 2;
+		if (backtracking(map, i + 1, j))
+			return (ERR_PARSING);
+	}
+	if (i - 1 >= 0 && map->tab[i - 1][j] == 0)
+	{
+		map->tab[i - 1][j] = 2;
+		if (backtracking(map, i - 1, j))
+			return (ERR_PARSING);
+	}
+	return (++j >= map->width || --j < 0 || ++i >= map->height || --i < 0);
+}
+
 int	check_player(t_map *map)
 {
 	int	i;
@@ -83,39 +112,10 @@ int	check_player(t_map *map)
 		{
 			if (map->tab[i][j] == 'N' || map->tab[i][j] == 'S' || \
 				map->tab[i][j] == 'W' || map->tab[i][j] == 'E')
-				return (bt_player(map, i, j));
+				return (backtracking(map, i, j));
 			j++;
 		}
 		i++;
 	}
 	return (-1);
-}
-
-int	bt_player(t_map *map, int i, int j)
-{
-	if (j + 1 < map->width && map->tab[i][j + 1] == 0)
-	{
-		map->tab[i][j + 1] = 2;
-		if (bt_player(map, i, j + 1))
-			return (ERR_PARSING);
-	}
-	if (j - 1 >= 0 && map->tab[i][j - 1] == 0)
-	{
-		map->tab[i][j - 1] = 2;
-		if (bt_player(map, i, j - 1))
-			return (ERR_PARSING);
-	}
-	if (i + 1 < map->height && map->tab[i + 1][j] == 0)
-	{
-		map->tab[i + 1][j] = 2;
-		if (bt_player(map, i + 1, j))
-			return (ERR_PARSING);
-	}
-	if (i - 1 >= 0 && map->tab[i - 1][j] == 0)
-	{
-		map->tab[i - 1][j] = 2;
-		if (bt_player(map, i - 1, j))
-			return (ERR_PARSING);
-	}
-	return (++j >= map->width || --j < 0 || ++i >= map->height || --i < 0);
 }

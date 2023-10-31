@@ -50,26 +50,26 @@ typedef struct s_cubdata {
 	t_player	player;
 }	t_cubdata;
 
-/* init.c */
-void	init_window(t_data *data);
-void	init_data(t_data *data);
-int		fill_data(char *path, t_cubdata *cub);
-int		fns(char *str);
-
-/* input.c */
-int		input(int key, t_data *data);
-
 /* error.c */
 int		print_errors(int n);
 void	print_map(t_map *map);
 
+/* init.c */
+void	init_data(t_data *data);
+int		fill_data(char *path, t_cubdata *cub);
+
+/* input.c */
+int		input(int key, t_data *data);
+
+/* memory.c */
+int		alloc_map(t_map *map);
+void	free_cubdata(t_cubdata *cub);
+
 /* parsing.c */
 int		parse_info(char *path, t_cubdata *cub);
-int		parse_walls_1(t_map *map);
 int		check_player(t_map *map);
-int		bt_player(t_map *map, int i, int j);
 
-/* free.c */
-void	free_cubdata(t_cubdata *cub);
+/* utils.c */
+int		fns(char *str);
 
 #endif

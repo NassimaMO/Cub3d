@@ -18,6 +18,7 @@ void	print_map(t_map *map)
 	int	i;
 	int	j;
 
+	ft_printf("\n");
 	i = 0;
 	while (i < map->height)
 	{
@@ -30,4 +31,5 @@ void	print_map(t_map *map)
 		ft_printf("\n");
 		i++;
 	}
+	ft_printf("\n");
 }
