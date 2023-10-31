@@ -100,18 +100,19 @@ t_img_data	*alloc_new_image(t_data *data, \
 	return (img);
 }
 
-t_img_data	*new_image(t_data *data, int id, t_list **changes, char *path)
+t_img_data	*new_image(t_data *data, int id, t_list **chg, char *path)
 {
 	t_img_data	*img;
 	t_img_data	*new_img;
 	t_list		*ptr;
 
-	if (!changes || !*changes || !(*changes)->content)
-		return (alloc_new_image(data, NULL, id, path));
-	merge_changes(changes);
-	ptr = *changes;
+	ptr = NULL;
+	if (chg)
+		ptr = (merge_changes(chg), *chg);
 	if (get_image(data, id, ptr))
 		return (get_image(data, id, ptr));
+	if (!ptr || !ptr->content)
+		return (alloc_new_image(data, NULL, id, path));
 	img = get_close_image(data, id, ptr);
 	while (ptr)
 	{
@@ -119,7 +120,7 @@ t_img_data	*new_image(t_data *data, int id, t_list **changes, char *path)
 		{
 			new_img = alloc_new_image(data, img, id, path);
 			if (!new_img)
-				return (ft_lstclear(changes, &free), NULL);
+				return (ft_lstclear(chg, &free), NULL);
 			iter_img(data, new_img, ptr->content);
 			img = new_img;
 		}

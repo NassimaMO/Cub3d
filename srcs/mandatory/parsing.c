@@ -61,7 +61,7 @@ int	parse_info(char *path, t_cubdata *cub)
 			return (free(line), close(fd), ERR_PARSING);
 		if (f == parse_map_char && (size_t)cub->map.width < ft_strlen(line))
 			cub->map.width = ft_strlen(line);
-		if (f == parse_map_char && fns(line) >= 0)
+		if (f == parse_map_char && firstnotsp(line))
 			cub->map.height++;
 		if (f == parse_textures && parse == 1)
 			f = parse_map_char;

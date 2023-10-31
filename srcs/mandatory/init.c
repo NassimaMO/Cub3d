@@ -77,7 +77,7 @@ static int	pixel(char *str)
 	int	g;
 	int	b;
 
-	r = ft_atoi(ft_strchr(str, ' '));
+	r = ft_atoi(firstnotsp(ft_strchr(str, ' ')));
 	g = ft_atoi(ft_strchr(str, ',') + 1);
 	b = ft_atoi(ft_strrchr(str, ',') + 1);
 	return ((r << (8 * 2)) + (g << 8) + b);
@@ -94,20 +94,20 @@ int	fill_data(char *path, t_cubdata *cub)
 	while (line && i < 6)
 	{
 		if (!ft_strncmp("NO", line, 2) && ++i)
-			new_image(&cub->data, 'N', NULL, line + fns(ft_strchr(line, ' ')));
+			new_image(&cub->data, 'N', NULL, firstnotsp(ft_strchr(line, ' ')));
 		else if (!ft_strncmp("SO", line, 2) && ++i)
-			new_image(&cub->data, 'S', NULL, line + fns(ft_strchr(line, ' ')));
+			new_image(&cub->data, 'S', NULL, firstnotsp(ft_strchr(line, ' ')));
 		else if (!ft_strncmp("WE", line, 2) && ++i)
-			new_image(&cub->data, 'W', NULL, line + fns(ft_strchr(line, ' ')));
+			new_image(&cub->data, 'W', NULL, firstnotsp(ft_strchr(line, ' ')));
 		else if (!ft_strncmp("EA", line, 2) && ++i)
-			new_image(&cub->data, 'E', NULL, line + fns(ft_strchr(line, ' ')));
+			new_image(&cub->data, 'E', NULL, firstnotsp(ft_strchr(line, ' ')));
 		else if (!ft_strncmp("F", line, 1) && ++i)
 			cub->f_color = pixel(line);
 		else if (!ft_strncmp("C", line, 1) && ++i)
-			cub->f_color = pixel(line);
+			cub->c_color = pixel(line);
 		line = (free(line), gnl_wraper(fd));
 	}
-	while (line && fns(line) < 0)
+	while (line && !firstnotsp(line))
 		line = (free(line), gnl_wraper(fd));
 	return (fill_map(cub, line, fd));
 }

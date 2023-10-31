@@ -26,7 +26,6 @@ int	main(int argc, char *argv[])
 	data = &cub.data;
 	init_data(data);
 	fill_data(argv[1], &cub);
-	print_map(&cub.map);
 	if (check_player(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
 	canvas = get_canvas(data, MAIN);

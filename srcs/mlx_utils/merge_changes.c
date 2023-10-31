@@ -74,6 +74,8 @@ void	merge_changes(t_list **changes)
 	t_list	*ptr;
 	t_list	*change;
 
+	if (!changes)
+		return ;
 	dup_list = NULL;
 	change = *changes;
 	while (change)

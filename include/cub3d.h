@@ -70,6 +70,6 @@ int		parse_info(char *path, t_cubdata *cub);
 int		check_player(t_map *map);
 
 /* utils.c */
-int		fns(char *str);
+char	*firstnotsp(char *str);
 
 #endif

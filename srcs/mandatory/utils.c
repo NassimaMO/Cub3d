@@ -1,15 +1,12 @@
 #include "cub3d.h"
 
-int	fns(char *str)
+char	*firstnotsp(char *str)
 {
-	int	i;
-
-	i = 0;
-	while (str[i])
+	while (str && *str)
 	{
-		if (!ft_isspace(str[i]))
-			return (i);
-		i++;
+		if (!ft_isspace(*str))
+			return (str);
+		str++;
 	}
-	return (-1);
+	return (NULL);
 }
