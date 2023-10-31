@@ -117,7 +117,5 @@ int	bt_player(t_map *map, int i, int j)
 		if (bt_player(map, i - 1, j))
 			return (ERR_PARSING);
 	}
-	if (j + 1 >= map->width || j - 1 < 0 || i + 1 >= map->height || i - 1 < 0)
-		return (ERR_PARSING);
-	return (0);
+	return (++j >= map->width || --j < 0 || ++i >= map->height || --i < 0);
 }

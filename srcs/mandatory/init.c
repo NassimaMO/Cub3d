@@ -52,7 +52,7 @@ int	alloc_map(t_map *map)
 	return (0);
 }
 
-void	init_player(t_player *player, int i, int j, char c)
+void	init_p(t_player *player, int i, int j, char c)
 {
 	if (c == 'N')
 	{
@@ -97,10 +97,7 @@ int	fill_map(t_cubdata *cub, char *first_line, int fd)
 		{
 			tmp[0] = s[j];
 			if (s[j] == 'N' || s[j] == 'S' || s[j] == 'W' || s[j] == 'E')
-			{
-				cub->map.tab[i][j] = s[j];
-				init_player(&cub->player, i, j, s[j]);
-			}
+				cub->map.tab[i][j] = (init_p(&cub->player, i, j, s[j]), s[j]);
 			else
 				cub->map.tab[i][j] = ft_atoi(tmp);
 			j++;
@@ -117,7 +114,7 @@ int	pixel(char *str)
 	int	b;
 
 	r = ft_atoi(ft_strchr(str, ' '));
-	g =  ft_atoi(ft_strchr(str, ',') + 1);
+	g = ft_atoi(ft_strchr(str, ',') + 1);
 	b = ft_atoi(ft_strrchr(str, ',') + 1);
 	return ((r << (8 * 2)) + (g << 8) + b);
 }
