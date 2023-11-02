@@ -12,6 +12,7 @@
 
 #include "cub3d.h"
 
+/* initializes all mlx related data */
 void	init_data(t_data *data)
 {
 	ft_bzero(data, sizeof(t_data));
@@ -28,34 +29,22 @@ void	init_data(t_data *data)
 		return (free_data(data), exit(print_errors(ERR_MEMORY)));
 }
 
+/* initializes player ; give pos and character of player in the file */
 static void	init_p(t_player *player, int i, int j, char c)
 {
 	if (c == 'N')
-	{
-		player->direction.x = 0;
 		player->direction.y = 1;
-	}
 	if (c == 'S')
-	{
-		player->direction.x = 0;
 		player->direction.y = -1;
-	}
 	if (c == 'W')
-	{
 		player->direction.x = -1;
-		player->direction.y = 0;
-	}
 	if (c == 'E')
-	{
 		player->direction.x = 1;
-		player->direction.y = 0;
-	}
-	player->direction.z = 0;
 	player->position.x = j;
 	player->position.y = i;
-	player->position.z = 0;
 }
 
+/* fills map tab with file data ; should be called after fill_data */
 static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 {
 	int		i;
@@ -83,6 +72,7 @@ static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 	return (close(fd));
 }
 
+/* gives string starting at color info on file ; format "x r,g,b" */
 static int	pixel(char *str)
 {
 	int	r;
@@ -95,6 +85,7 @@ static int	pixel(char *str)
 	return ((r << (8 * 2)) + (g << 8) + b);
 }
 
+/* fills textures, colours and map with file data */
 int	fill_data(char *path, t_cubdata *cub)
 {
 	int		fd;

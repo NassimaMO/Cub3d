@@ -12,6 +12,7 @@
 
 #include "cub3d.h"
 
+/* frees pointers tab up to size */
 static void	free_tab(int **tab, int size)
 {
 	int	i;
@@ -25,6 +26,7 @@ static void	free_tab(int **tab, int size)
 	free(tab);
 }
 
+/* alloc map tab ; map height and width should be initialized beforehand */
 int	alloc_map(t_map *map)
 {
 	int	i;
@@ -43,6 +45,7 @@ int	alloc_map(t_map *map)
 	return (0);
 }
 
+/* frees all data */
 void	free_cubdata(t_cubdata *cub)
 {
 	if (cub->map.tab)

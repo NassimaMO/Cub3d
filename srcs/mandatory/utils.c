@@ -12,6 +12,8 @@
 
 #include "cub3d.h"
 
+/*	returns pointer to string pos where first not-space character is found ;
+	returns NULL if str is NULL or empty or contains only spaces */
 char	*firstnotsp(char *str)
 {
 	while (str && *str)

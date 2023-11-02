@@ -12,6 +12,7 @@
 
 #include "cub3d.h"
 
+/* general function for input handling */
 int	input(int key, t_data *data)
 {
 	input_escape(key, data);

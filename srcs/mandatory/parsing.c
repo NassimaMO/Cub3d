@@ -12,6 +12,9 @@
 
 #include "cub3d.h"
 
+/*	checks texture line ; should be called at start of file ;
+	returns ERR_PARSING on error, 1 if finished and 0 if ongoing ; 
+	ERR_PARSING should be negative									*/
 static int	parse_textures(char *line)
 {
 	static char			*id[] = {"NO", "SO", "WE", "EA", "F", "C"};
@@ -41,6 +44,7 @@ static int	parse_textures(char *line)
 	return (bool_end == 6);
 }
 
+/* checks map line ; return error if an unknown char is found, 0 if not */
 static int	parse_map_char(char *line)
 {
 	int	i;
@@ -54,6 +58,7 @@ static int	parse_map_char(char *line)
 	return (0);
 }
 
+/* parses file and calls check lines functions */
 int	parse_info(char *path, t_cubdata *cub)
 {
 	char	*line;
@@ -82,6 +87,7 @@ int	parse_info(char *path, t_cubdata *cub)
 	return (close(fd));
 }
 
+/* backtracking used to check if player is surrounded by walls in the file */
 static int	backtracking(t_map *map, int i, int j)
 {
 	if (j + 1 < map->width && map->tab[i][j + 1] == 0)
@@ -111,6 +117,7 @@ static int	backtracking(t_map *map, int i, int j)
 	return (++j >= map->width || --j < 0 || ++i >= map->height || --i < 0);
 }
 
+/* checking player main function, calls backtracking function */
 int	check_player(t_map *map)
 {
 	int	i;

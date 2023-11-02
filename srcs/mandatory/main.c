@@ -20,12 +20,10 @@ int	main(int argc, char *argv[])
 
 	if (argc != 2)
 		return (print_errors(ERR_ARGS));
-	ft_bzero(&cub.map, sizeof(t_map));
+	ft_bzero(&cub, sizeof(t_cubdata));
 	if (parse_info(argv[1], &cub))
 		return (print_errors(ERR_PARSING));
-	data = &cub.data;
-	init_data(data);
-	fill_data(argv[1], &cub);
+	data = (init_data(&cub.data), fill_data(argv[1], &cub), &cub.data);
 	if (check_player(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
 	canvas = get_canvas(data, MAIN);
@@ -34,6 +32,5 @@ int	main(int argc, char *argv[])
 	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
 	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, data);
 	mlx_loop(data->mlx_ptr);
-	free_cubdata(&cub);
-	return (0);
+	return (free_cubdata(&cub), 0);
 }

@@ -12,6 +12,7 @@
 
 #include "cub3d.h"
 
+/* gives an error code as parameter to print corresonding error message */
 int	print_errors(int n)
 {
 	static int	error = 0;
@@ -25,6 +26,7 @@ int	print_errors(int n)
 	return (n);
 }
 
+/* prints the map ; debugging */
 void	print_map(t_map *map)
 {
 	int	i;

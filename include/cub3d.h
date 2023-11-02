@@ -32,8 +32,9 @@
 
 # define MAIN 1
 
-# define FOV 70
-# define WALL 
+# define FOV 90
+# define WALL 1
+# define SENS 1
 
 typedef struct s_map {
 	int	width;
@@ -47,10 +48,15 @@ typedef struct s_coord {
 	int	z;
 }	t_coord;
 
+typedef struct s_settings {
+	char	fov;
+	double	sens;
+}	t_settings;
+
 typedef struct s_player {
 	t_coord	position;
 	t_coord	direction;
-	int		fov;
+	double	speed;
 }	t_player;
 
 typedef struct s_cubdata {
@@ -60,6 +66,7 @@ typedef struct s_cubdata {
 	int			f_color;
 	int			c_color;
 	t_player	player;
+	t_settings	settings;
 }	t_cubdata;
 
 /* error.c */
