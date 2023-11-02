@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cub3d.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/11/02 14:48:32 by nghulam-          #+#    #+#             */
+/*   Updated: 2023/11/02 14:48:35 by nghulam-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CUB3D_H
 # define CUB3D_H
 
@@ -42,7 +54,7 @@ typedef struct s_player {
 }	t_player;
 
 typedef struct s_cubdata {
-	t_data		data; 
+	t_data		data;
 	t_map		map;
 	t_map		valid_map;
 	int			f_color;

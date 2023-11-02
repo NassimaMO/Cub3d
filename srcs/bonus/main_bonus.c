@@ -26,6 +26,6 @@ int	main(int argc, char *argv[])
 	mlx_loop(data.mlx_ptr);
 	free_data(&data);
 	(void)argc;
-	(void)argv;	
+	(void)argv;
 	return (0);
 }
