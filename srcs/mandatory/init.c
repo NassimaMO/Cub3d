@@ -72,7 +72,8 @@ static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 	return (close(fd));
 }
 
-/* gives string starting at color info on file ; format "x r,g,b" */
+/*	give string starting at color info on file to have corresponding int 
+	represented pixel ; string format should be "x r,g,b" 					*/
 static int	pixel(char *str)
 {
 	int	r;

@@ -12,7 +12,7 @@
 
 #include "cub3d.h"
 
-/* gives an error code as parameter to print corresonding error message */
+/* give an error code as parameter to print corresponding error message */
 int	print_errors(int n)
 {
 	static int	error = 0;

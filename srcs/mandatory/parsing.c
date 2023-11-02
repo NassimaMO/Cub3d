@@ -44,7 +44,7 @@ static int	parse_textures(char *line)
 	return (bool_end == 6);
 }
 
-/* checks map line ; return error if an unknown char is found, 0 if not */
+/* checks map line ; returns error if an unknown char is found, 0 if not */
 static int	parse_map_char(char *line)
 {
 	int	i;
