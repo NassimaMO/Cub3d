@@ -16,7 +16,6 @@ int	main(int argc, char *argv[])
 {
 	t_cubdata	cub;
 	t_data		*data;
-	t_img_data	*canvas;
 
 	if (argc != 2)
 		return (print_errors(ERR_ARGS));
@@ -26,8 +25,7 @@ int	main(int argc, char *argv[])
 	data = (init_data(&cub.data), fill_data(argv[1], &cub), &cub.data);
 	if (check_player(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
-	canvas = get_canvas(data, MAIN);
-	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
+	raycasting(&cub);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);
 	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
 	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, data);

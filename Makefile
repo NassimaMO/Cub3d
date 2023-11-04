@@ -27,10 +27,10 @@ INC_DIR					=	./include
 
 INC_FLAG				=	$(addprefix -I,$(INC_DIR) $(LIBMLX_DIR) $(LIBFT_DIR)/include $(LIBMLX_UTILS_DIR))
 
-LINK_FLAG				=	-L$(LIBMLX_UTILS_DIR) -lmlx_utils -lm -L$(LIBFT_DIR) -lft -L$(LIBMLX_DIR) -lmlx -lXext -lX11 -lXrender
+LINK_FLAG				=	-L$(LIBMLX_UTILS_DIR) -lmlx_utils -L$(LIBFT_DIR) -lft -L$(LIBMLX_DIR) -lmlx -lXext -lX11 -lXrender -lm
 
 
-COMMON_FILES			=	error.c init.c input.c memory.c parsing.c utils.c
+COMMON_FILES			=	error.c init.c input.c memory.c parsing.c utils.c raycasting.c
 
 MANDATORY_FILES			=	$(COMMON_FILES) main.c
 

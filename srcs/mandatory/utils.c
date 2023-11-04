@@ -24,3 +24,13 @@ char	*firstnotsp(char *str)
 	}
 	return (NULL);
 }
+
+t_coord	transf_coord(int x, int y, int z)
+{
+	t_coord	p;
+
+	p.x = x;
+	p.y = y;
+	p.z = z;
+	return (p);
+}

@@ -36,6 +36,9 @@
 # define WALL 1
 # define SENS 1
 
+# define RATIOVER 0.5
+# define RATIOHOR 0.5
+
 typedef struct s_map {
 	int	width;
 	int	height;
@@ -90,5 +93,9 @@ int		check_player(t_map *map);
 
 /* utils.c */
 char	*firstnotsp(char *str);
+t_coord	transf_coord(int x, int y, int z);
+
+/* raycasting.c */
+void	raycasting(t_cubdata *cub);
 
 #endif
