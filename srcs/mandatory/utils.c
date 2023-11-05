@@ -25,7 +25,7 @@ char	*firstnotsp(char *str)
 	return (NULL);
 }
 
-t_coord	transf_coord(int x, int y, int z)
+t_coord	transf_coord(double x, double y, double z)
 {
 	t_coord	p;
 

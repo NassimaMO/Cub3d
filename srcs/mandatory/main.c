@@ -25,6 +25,7 @@ int	main(int argc, char *argv[])
 	data = (init_data(&cub.data), fill_data(argv[1], &cub), &cub.data);
 	if (check_player(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
+	cub.settings.fov = FOV;
 	raycasting(&cub);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);
 	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);

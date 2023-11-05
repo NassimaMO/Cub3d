@@ -36,8 +36,10 @@
 # define WALL 1
 # define SENS 1
 
-# define RATIOVER 0.5
-# define RATIOHOR 0.5
+# define RATIOV 0.5
+# define RATIOH 0.5
+
+# define EPSILON 10e-4
 
 typedef struct s_map {
 	int	width;
@@ -46,9 +48,9 @@ typedef struct s_map {
 }	t_map;
 
 typedef struct s_coord {
-	int	x;
-	int	y;
-	int	z;
+	double	x;
+	double	y;
+	double	z;
 }	t_coord;
 
 typedef struct s_settings {
@@ -93,7 +95,7 @@ int		check_player(t_map *map);
 
 /* utils.c */
 char	*firstnotsp(char *str);
-t_coord	transf_coord(int x, int y, int z);
+t_coord	transf_coord(double x, double y, double z);
 
 /* raycasting.c */
 void	raycasting(t_cubdata *cub);

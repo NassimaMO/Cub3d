@@ -33,9 +33,9 @@ void	init_data(t_data *data)
 static void	init_p(t_player *player, int i, int j, char c)
 {
 	if (c == 'N')
-		player->direction.y = 1;
-	if (c == 'S')
 		player->direction.y = -1;
+	if (c == 'S')
+		player->direction.y = 1;
 	if (c == 'W')
 		player->direction.x = -1;
 	if (c == 'E')
