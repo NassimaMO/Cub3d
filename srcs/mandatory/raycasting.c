@@ -18,7 +18,7 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	double	angle;
 	double	norm;
 	t_coord	cam;
-	t_coord	vector; 
+	t_coord	vector;
 
 	cam = transf_coord(canvas->width * RATIOH, canvas->height * RATIOV, 0);
 	angle = (j - cam.x) * cub->settings.fov * M_PI / (canvas->width * 180);
@@ -64,6 +64,7 @@ void	raycasting_put(t_coord point, t_cubdata *cub, t_point p, t_coord vector)
 		return (my_mlx_pixel_put(canvas, p.x, p.y, cub->f_color));
 	if (point.z >= 1)
 		return (my_mlx_pixel_put(canvas, p.x, p.y, cub->c_color));
+	orientation = 'N';
 	if (fabs(point.y + 1 - get_case(vector, point).y) < EPSILON)
 		orientation = 'S';
 	else if (fabs(point.y - get_case(vector, point).y - 1) < EPSILON)
@@ -103,9 +104,10 @@ t_coord	intersection(t_coord start, t_coord vector, t_map *map)
 	point = transf_coord(start.x + min * vector.x, start.y + min * vector.y, \
 						start.z + min * vector.z);
 	_case = get_case(vector, point);
-	if (point.z <= 0 || point.z >= 1 || \
+	if (fabs(point.z) <= EPSILON || point.z == 1 || \
 		map->tab[(int)_case.y][(int)_case.x] == 1)
 		return (point);
+	//printf("(%f, %f, %f) (%f, %f, %f)\n", point.x, point.y, point.z, vector.x, vector.y, vector.z);
 	return (intersection(point, vector, map));
 }
 
@@ -127,8 +129,12 @@ void	raycasting(t_cubdata *cub)
 		while (j < canvas->width)
 		{
 			vector = get_vector(canvas, j, i, cub);
-			raycasting_put(intersection(cub->player.position, \
-			vector, &cub->map), cub, transf_point(j, i), vector);
+			/* if (i >= 458)
+			{
+				printf("********** %d %d **********\n", i, j); */
+				raycasting_put(intersection(cub->player.position, \
+				vector, &cub->map), cub, transf_point(j, i), vector);
+			/* } */
 			j++;
 		}
 		i++;

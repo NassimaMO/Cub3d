@@ -26,10 +26,11 @@ int	main(int argc, char *argv[])
 	if (check_player(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
 	cub.settings.fov = FOV;
+	cub.settings.sens = 1;
 	raycasting(&cub);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);
 	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
-	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, data);
+	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, &cub);
 	mlx_loop(data->mlx_ptr);
 	return (free_cubdata(&cub), 0);
 }

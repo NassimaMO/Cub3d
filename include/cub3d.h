@@ -34,12 +34,12 @@
 
 # define FOV 90
 # define WALL 1
-# define SENS 1
+# define SENS 0.1
 
 # define RATIOV 0.5
 # define RATIOH 0.5
 
-# define EPSILON 10e-4
+# define EPSILON 10e-10
 
 typedef struct s_map {
 	int	width;
@@ -83,7 +83,7 @@ void	init_data(t_data *data);
 int		fill_data(char *path, t_cubdata *cub);
 
 /* input.c */
-int		input(int key, t_data *data);
+int		input(int key, t_cubdata *cub);
 
 /* memory.c */
 int		alloc_map(t_map *map);

@@ -17,6 +17,7 @@
 # include "mlx.h"
 # include "mlx_int.h"
 # include "libft.h"
+# include "X11/keysym.h"
 # include <math.h>
 
 # define NUM_PATH "./images/numbers/"

@@ -40,8 +40,10 @@ static void	init_p(t_player *player, int i, int j, char c)
 		player->direction.x = -1;
 	if (c == 'E')
 		player->direction.x = 1;
-	player->position.x = j;
-	player->position.y = i;
+	player->position.x = j + 0.5;
+	player->position.y = i + 0.5;
+	player->position.z = 0.5;
+	player->speed = 0.25;
 }
 
 /* fills map tab with file data ; should be called after fill_data */
