@@ -27,9 +27,11 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	vector.y = cub->player.direction.x * sin(angle) + \
 				cub->player.direction.y * cos(angle);
 	vector.z = cub->player.direction.z;
+	norm = sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2));
 	angle = (cam.y - i) * cub->settings.fov * M_PI / (canvas->width * 180);
 	norm = sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2));
-	return (transf_coord(vector.x, vector.y, norm * tan(angle)));
+	vector = transf_coord(vector.x, vector.y, vector.z + norm * tan(angle));
+	return (vector);
 }
 
 t_coord	get_case(t_coord vector, t_coord point)
@@ -136,4 +138,5 @@ void	raycasting(t_cubdata *cub)
 		i++;
 	}
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
+	printf("\n");
 }
