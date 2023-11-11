@@ -49,13 +49,15 @@ int	input_cam(int key, t_cubdata *cub)
 	}
 	else if (key == XK_Left)
 	{
-		cub->player.direction.x += SENS * cub->settings.sens;
-		cub->player.direction.y -= SENS * cub->settings.sens;
+		cub->player.direction = transf_coord(cub->player.direction.x * cos(SENS) + \
+		cub->player.direction.y * sin(SENS), -cub->player.direction.x * sin(SENS) + \
+		cub->player.direction.y * cos(SENS), cub->player.direction.z);
 	}
 	else if (key == XK_Right)
 	{
-		cub->player.direction.x -= SENS * cub->settings.sens;
-		cub->player.direction.y += SENS * cub->settings.sens;
+		cub->player.direction = transf_coord(cub->player.direction.x * cos(SENS) - \
+		cub->player.direction.y * sin(SENS), cub->player.direction.x * sin(SENS) + \
+		cub->player.direction.y * cos(SENS), cub->player.direction.z);
 	}
 	return (0);
 	
@@ -64,13 +66,10 @@ int	input_cam(int key, t_cubdata *cub)
 /* general function for input handling */
 int	input(int key, t_cubdata *cub)
 {
-	static int	k = 0;
-
 	input_escape(key, &cub->data);
 	input_move(key, &cub->player);
 	input_cam(key, cub);
-	/* if (k == 2)
-		 */raycasting(cub);
-	k++;
+	raycasting(cub);
+	mlx_flush_event(cub->data.mlx_ptr);
 	return (key);
 }

@@ -34,7 +34,7 @@
 
 # define FOV 90
 # define WALL 1
-# define SENS 0.1
+# define SENS (M_PI * 10 / 180)
 
 # define RATIOV 0.5
 # define RATIOH 0.5
