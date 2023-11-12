@@ -91,6 +91,7 @@ void	free_cubdata(t_cubdata *cub);
 
 /* parsing.c */
 int		parse_info(char *path, t_cubdata *cub);
+int		parse_map(t_map *map);
 int		check_player(t_map *map);
 
 /* utils.c */
