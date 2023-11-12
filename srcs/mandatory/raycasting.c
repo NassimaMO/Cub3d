@@ -66,14 +66,13 @@ void	raycasting_put(t_coord point, t_cubdata *cub, t_point p, t_coord vector)
 		return (my_mlx_pixel_put(canvas, p.x, p.y, cub->f_color));
 	if (point.z >= 1 - EPSILON)
 		return (my_mlx_pixel_put(canvas, p.x, p.y, cub->c_color));
-	orientation = 'N';
 	if (fabs(point.y + 1 - get_case(vector, point).y) < EPSILON)
 		orientation = 'S';
 	else if (fabs(point.y - get_case(vector, point).y - 1) < EPSILON)
 		orientation = 'N';
 	else if (fabs(point.x + 1 - get_case(vector, point).x) < EPSILON)
 		orientation = 'E';
-	else if (fabs(point.x - get_case(vector, point).x - 1) < EPSILON)
+	else
 		orientation = 'W';
 	img = new_image(&cub->data, orientation, NULL, NULL);
 	i = (point.z - floor(point.z)) * img->height;
@@ -109,7 +108,6 @@ t_coord	intersection(t_coord start, t_coord vector, t_map *map)
 	if (point.z <= EPSILON || point.z >= 1 - EPSILON || \
 		map->tab[(int)_case.y][(int)_case.x] == 1)
 		return (point);
-	//printf("(%f, %f, %f) (%f, %f, %f)\n", point.x, point.y, point.z, vector.x, vector.y, vector.z);
 	return (intersection(point, vector, map));
 }
 
