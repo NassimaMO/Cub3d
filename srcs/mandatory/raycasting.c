@@ -38,15 +38,15 @@ t_coord	get_case(t_coord vector, t_coord point)
 {
 	t_coord	_case;
 
-	if (vector.y > 0)
+	if (vector.y > EPSILON)
 		_case.y = floor(point.y) + 1;
 	else
 		_case.y = ceil(point.y) - 1;
-	if (vector.x > 0)
+	if (vector.x > EPSILON)
 		_case.x = floor(point.x) + 1;
 	else
 		_case.x = ceil(point.x) - 1;
-	if (vector.z > 0)
+	if (vector.z > EPSILON)
 		_case.z = floor(point.z) + 1;
 	else
 		_case.z = ceil(point.z) - 1;
