@@ -34,3 +34,8 @@ t_coord	transf_coord(double x, double y, double z)
 	p.z = z;
 	return (p);
 }
+
+void	print_coord(t_coord *coord)
+{
+	printf("(%.3f, %.3f, %.3f)", coord->x, coord->y, coord->z);
+}

@@ -34,6 +34,20 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	return (vector);
 }
 
+/* t_coord	get_case(t_coord vector, t_coord point)
+{
+	t_coord	_case;
+
+	_case = transf_coord(floor(point.x), floor(point.y), floor(point.z));
+	if (point.x - floor(point.x) < EPSILON && vector.x < 0)
+		_case.x = floor(point.x) - 1;
+	if (point.y - floor(point.y) < EPSILON && vector.y < 0)
+		_case.y = floor(point.y) - 1;
+	if (point.z - floor(point.z) < EPSILON && vector.z < 0)
+		_case.z = floor(point.z) - 1;
+	return (_case);
+} */
+
 t_coord	get_case(t_coord vector, t_coord point)
 {
 	t_coord	_case;
