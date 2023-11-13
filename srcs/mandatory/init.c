@@ -65,10 +65,14 @@ static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 			tmp[0] = s[j];
 			if (s[j] == 'N' || s[j] == 'S' || s[j] == 'W' || s[j] == 'E')
 				cub->map.tab[i][j] = (init_p(&cub->player, i, j, s[j]), s[j]);
+			else if (ft_isspace(s[j]))
+				cub->map.tab[i][j] = -1;
 			else
 				cub->map.tab[i][j] = ft_atoi(tmp);
 			j++;
 		}
+		while (j < cub->map.width)
+			cub->map.tab[i][j++] = -1;
 		s = (i++, free(s), gnl_wraper(fd));
 	}
 	return (close(fd));

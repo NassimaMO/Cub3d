@@ -87,6 +87,45 @@ int	parse_info(char *path, t_cubdata *cub)
 	return (close(fd));
 }
 
+int	parse_map(t_map *map)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < map->height && map->tab[i])
+	{
+		j = 0;
+		while (map->tab[i][j] && map->tab[i][j] == -1)
+			j++;
+		if (!map->tab[i][j] || map->tab[i][j] != 1)
+			return (ERR_PARSING);
+		j = map->width - 1;
+		while (j > 0 && map->tab[i][j] == -1)
+			j--;
+		if (!map->tab[i][j] || map->tab[i][j] != 1)
+			return (ERR_PARSING);
+		i++;
+	}
+	i = 0;
+	j = 0;
+	while (j < map->width && map->tab[i][j])
+	{
+		i = 0;
+		while (i < map->height && map->tab[i][j] == -1)
+			i++;
+		if (i < map->height && map->tab[i][j] == 0)
+			return (ERR_PARSING);
+		i = map->height - 1;
+		while (i > 0 && map->tab[i][j] == -1)
+			i--;
+		if (i > 0 && map->tab[i][j] == 0)
+			return (ERR_PARSING);
+		j++;
+	}
+	return (0);
+}
+
 /* backtracking used to check if player is surrounded by walls in the file */
 static int	backtracking(t_map *map, int i, int j)
 {
