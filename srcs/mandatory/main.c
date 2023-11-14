@@ -23,7 +23,7 @@ int	main(int argc, char *argv[])
 	if (parse_info(argv[1], &cub))
 		return (print_errors(ERR_PARSING));
 	data = (init_data(&cub.data), fill_data(argv[1], &cub), &cub.data);
-	if (/*check_player(&cub.map)*/parse_map(&cub.map))
+	if (parse_map_walls(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
 	cub.settings.fov = FOV;
 	cub.settings.sens = 1;

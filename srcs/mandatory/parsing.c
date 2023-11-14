@@ -76,8 +76,8 @@ int	parse_info(char *path, t_cubdata *cub)
 		parse = f(line);
 		if (parse < 0)
 			return (free(line), close(fd), ERR_PARSING);
-		if (f == parse_map_char && (size_t)cub->map.width < ft_strlen(line))
-			cub->map.width = ft_strlen(line);
+		if (f == parse_map_char && cub->map.width < nospacelen(line))
+			cub->map.width = nospacelen(line);
 		if (f == parse_map_char && firstnotsp(line))
 			cub->map.height++;
 		if (f == parse_textures && parse == 1)
@@ -87,7 +87,7 @@ int	parse_info(char *path, t_cubdata *cub)
 	return (close(fd));
 }
 
-int	parse_map(t_map *map)
+int	parse_map_walls(t_map *map)
 {
 	int	i;
 	int	j;
@@ -96,38 +96,26 @@ int	parse_map(t_map *map)
 	while (i < map->height && map->tab[i])
 	{
 		j = 0;
-		while (map->tab[i][j] && map->tab[i][j] == -1)
+		while (j < map->width && map->tab[i][j] == -1)
 			j++;
-		if (!map->tab[i][j] || map->tab[i][j] != 1)
+		if (j != map->width && map->tab[i][j] != 1)
 			return (ERR_PARSING);
-		j = map->width - 1;
-		while (j > 0 && map->tab[i][j] == -1)
-			j--;
-		if (!map->tab[i][j] || map->tab[i][j] != 1)
+		while (j < map->width && map->tab[i][j] != -1)
+		{
+			if (map->tab[i][j] != 1 && (i == 0 || map->tab[i - 1][j] == -1 || \
+							i == map->height - 1 || map->tab[i + 1][j] == -1))
+				return (ERR_PARSING);
+			j++;
+		}
+		if (j != 0 && j - 1 < map->width && map->tab[i][j - 1] != 1)
 			return (ERR_PARSING);
 		i++;
-	}
-	i = 0;
-	j = 0;
-	while (j < map->width && map->tab[i][j])
-	{
-		i = 0;
-		while (i < map->height && map->tab[i][j] == -1)
-			i++;
-		if (i < map->height && map->tab[i][j] == 0)
-			return (ERR_PARSING);
-		i = map->height - 1;
-		while (i > 0 && map->tab[i][j] == -1)
-			i--;
-		if (i > 0 && map->tab[i][j] == 0)
-			return (ERR_PARSING);
-		j++;
 	}
 	return (0);
 }
 
-/* backtracking used to check if player is surrounded by walls in the file */
-static int	backtracking(t_map *map, int i, int j)
+/* backtracking used to identify reachable cases in the map */
+int	backtracking(t_map *map, int i, int j)
 {
 	if (j + 1 < map->width && map->tab[i][j + 1] == 0)
 	{
@@ -154,26 +142,4 @@ static int	backtracking(t_map *map, int i, int j)
 			return (ERR_PARSING);
 	}
 	return (++j >= map->width || --j < 0 || ++i >= map->height || --i < 0);
-}
-
-/* checking player main function, calls backtracking function */
-int	check_player(t_map *map)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < map->height)
-	{
-		j = 0;
-		while (j < map->width)
-		{
-			if (map->tab[i][j] == 'N' || map->tab[i][j] == 'S' || \
-				map->tab[i][j] == 'W' || map->tab[i][j] == 'E')
-				return (backtracking(map, i, j));
-			j++;
-		}
-		i++;
-	}
-	return (-1);
 }

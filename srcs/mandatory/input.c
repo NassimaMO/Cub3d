@@ -35,7 +35,9 @@ static int	input_move(int key, t_player *player)
 		player->position.x -= player->direction.y * player->speed;
 		player->position.y += player->direction.x * player->speed;
 	}
-	return (0);
+	else
+		return (0);
+	return (1);
 }
 
 /* moving camera with arrows input handling */
@@ -57,16 +59,18 @@ static int	input_cam(int key, t_coord *direction, t_settings *settings)
 		sin(SENS), direction->x * sin(SENS) + direction->y * cos(SENS), \
 		direction->z);
 	}
-	return (0);
+	else
+		return (0);
+	return (1);
 }
 
 /* general function for input handling */
 int	input(int key, t_cubdata *cub)
 {
-	input_escape(key, &cub->data);
-	input_move(key, &cub->player);
-	input_cam(key, &cub->player.direction, &cub->settings);
-	raycasting(cub);
-	mlx_flush_event(cub->data.mlx_ptr);
-	return (key);
+	if (input_escape(key, &cub->data))
+		return (1);
+	if (input_move(key, &cub->player) || \
+		input_cam(key, &cub->player.direction, &cub->settings))
+		return (raycasting(cub), mlx_flush_event(cub->data.mlx_ptr), 1);
+	return (0);
 }

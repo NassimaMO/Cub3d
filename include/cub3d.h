@@ -39,7 +39,7 @@
 # define RATIOV 0.5
 # define RATIOH 0.5
 
-# define EPSILON 10e-2
+# define EPSILON 10e-5
 
 typedef struct s_map {
 	int	width;
@@ -91,11 +91,12 @@ void	free_cubdata(t_cubdata *cub);
 
 /* parsing.c */
 int		parse_info(char *path, t_cubdata *cub);
-int		parse_map(t_map *map);
-int		check_player(t_map *map);
+int		parse_map_walls(t_map *map);
+int		backtracking(t_map *map, int i, int j);
 
 /* utils.c */
 char	*firstnotsp(char *str);
+int		nospacelen(char *str);
 t_coord	transf_coord(double x, double y, double z);
 void	print_coord(t_coord *coord);
 

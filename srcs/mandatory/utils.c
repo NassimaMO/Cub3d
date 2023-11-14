@@ -25,6 +25,18 @@ char	*firstnotsp(char *str)
 	return (NULL);
 }
 
+int	nospacelen(char *str)
+{
+	int		len;
+
+	if (!firstnotsp(str))
+		return (0);
+	len = ft_strlen(str) - 1; 
+	while (len >= 0 && ft_isspace(str[len]))
+		len--;
+	return (len + 1);
+}
+
 t_coord	transf_coord(double x, double y, double z)
 {
 	t_coord	p;

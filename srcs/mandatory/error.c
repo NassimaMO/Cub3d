@@ -39,7 +39,12 @@ void	print_map(t_map *map)
 		j = 0;
 		while (j < map->width)
 		{
-			ft_printf("%d", map->tab[i][j]);
+			if (map->tab[i][j] == -1)
+				ft_printf("X");
+			else if (ft_isalpha(map->tab[i][j]))
+				ft_printf("%c", map->tab[i][j]);
+			else
+				ft_printf("%d", map->tab[i][j]);
 			j++;
 		}
 		ft_printf("\n");

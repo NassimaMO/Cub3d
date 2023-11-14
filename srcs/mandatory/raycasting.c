@@ -34,20 +34,6 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	return (vector);
 }
 
-/* t_coord	get_case(t_coord vector, t_coord point)
-{
-	t_coord	_case;
-
-	_case = transf_coord(floor(point.x), floor(point.y), floor(point.z));
-	if (point.x - floor(point.x) < EPSILON && vector.x < 0)
-		_case.x = floor(point.x) - 1;
-	if (point.y - floor(point.y) < EPSILON && vector.y < 0)
-		_case.y = floor(point.y) - 1;
-	if (point.z - floor(point.z) < EPSILON && vector.z < 0)
-		_case.z = floor(point.z) - 1;
-	return (_case);
-} */
-
 t_coord	get_case(t_coord vector, t_coord point)
 {
 	t_coord	_case;
@@ -103,24 +89,25 @@ t_coord	intersection(t_coord start, t_coord vector, t_map *map)
 	t_coord	point;
 	double	min;
 
+	min = 0;
 	_case = get_case(vector, start);
-	if (vector.x != 0)
-		min = (_case.x - start.x) / vector.x;
-	else if (vector.y != 0)
-		min = (_case.y - start.y) / vector.y;
-	else if (vector.z != 0)
-		min = (_case.z - start.z) / vector.z;
-	if (vector.x != 0)
-		min = fmin(min, (_case.x - start.x) / vector.x);
-	if (vector.y != 0)
-		min = fmin(min, (_case.y - start.y) / vector.y);
-	if (vector.z != 0)
-		min = fmin(min, (_case.z - start.z) / vector.z);
+	if (fabs(vector.x) >= EPSILON)
+		min = fabs((_case.x - start.x) / vector.x);
+	else if (fabs(vector.y) >= EPSILON)
+		min = fabs((_case.y - start.y) / vector.y);
+	else if (fabs(vector.z) >= EPSILON)
+		min = fabs((_case.z - start.z) / vector.z);
+	if (fabs(vector.x) >= EPSILON)
+		min = fmin(min, fabs((_case.x - start.x) / vector.x));
+	if (fabs(vector.y) >= EPSILON)
+		min = fmin(min, fabs((_case.y - start.y) / vector.y));
+	if (fabs(vector.z) >= EPSILON)
+		min = fmin(min, fabs((_case.z - start.z) / vector.z));
 	point = transf_coord(start.x + min * vector.x, start.y + min * vector.y, \
 						start.z + min * vector.z);
 	_case = get_case(vector, point);
 	if (point.z <= EPSILON || point.z >= 1 - EPSILON || \
-		map->tab[(int)_case.y][(int)_case.x] == 1)
+		map->tab[(int)(_case.y)][(int)(_case.x)] == 1)
 		return (point);
 	return (intersection(point, vector, map));
 }

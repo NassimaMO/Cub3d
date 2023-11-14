@@ -52,26 +52,24 @@ static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 	int		i;
 	int		j;
 	char	*s;
-	char	tmp[2];
 
 	if (!first_line || alloc_map(&cub->map))
 		return (ERR_PARSING);
-	s = (ft_bzero(tmp, 2), ft_bzero(&i, sizeof(int)), first_line);
+	i = 0;
+	s = first_line;
 	while (s)
 	{
 		j = 0;
-		while (i < cub->map.height && s[j])
+		while (s && i < cub->map.height && s[j] && j < cub->map.width)
 		{
-			tmp[0] = s[j];
+			cub->map.tab[i][j] = -1;
 			if (s[j] == 'N' || s[j] == 'S' || s[j] == 'W' || s[j] == 'E')
 				cub->map.tab[i][j] = (init_p(&cub->player, i, j, s[j]), s[j]);
-			else if (ft_isspace(s[j]))
-				cub->map.tab[i][j] = -1;
-			else
-				cub->map.tab[i][j] = ft_atoi(tmp);
+			if ('0' <= s[j] && s[j] <= '9')
+				cub->map.tab[i][j] = s[j] - '0';
 			j++;
 		}
-		while (j < cub->map.width)
+		while (i < cub->map.height && j < cub->map.width)
 			cub->map.tab[i][j++] = -1;
 		s = (i++, free(s), gnl_wraper(fd));
 	}
