@@ -13,7 +13,7 @@
 #include "cub3d.h"
 
 /* moving player with wasd keys input handling */
-static int	input_move(int key, t_player *player)
+static int	input_move(int key, t_player *player, t_map *map)
 {
 	if (key == XK_W || key == XK_w)
 	{
@@ -37,6 +37,7 @@ static int	input_move(int key, t_player *player)
 	}
 	else
 		return (0);
+	(void)map;
 	return (1);
 }
 
@@ -69,7 +70,7 @@ int	input(int key, t_cubdata *cub)
 {
 	if (input_escape(key, &cub->data))
 		return (1);
-	if (input_move(key, &cub->player) || \
+	if (input_move(key, &cub->player, &cub->map) || \
 		input_cam(key, &cub->player.direction, &cub->settings))
 		return (raycasting(cub), mlx_flush_event(cub->data.mlx_ptr), 1);
 	return (0);

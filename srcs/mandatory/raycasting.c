@@ -34,22 +34,30 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	return (vector);
 }
 
-t_coord	get_case(t_coord vector, t_coord point)
+t_coord	get_case(t_coord vector, t_coord point, int p)
 {
 	t_coord	_case;
 
-	if (vector.y > EPSILON)
+	if (p == NEXT && vector.y > EPSILON)
 		_case.y = floor(point.y) + 1;
-	else
+	if (p == NEXT && vector.y <= EPSILON)
 		_case.y = ceil(point.y) - 1;
-	if (vector.x > EPSILON)
+	if (p == NEXT && vector.x > EPSILON)
 		_case.x = floor(point.x) + 1;
-	else
+	if (p == NEXT && vector.x <= EPSILON)
 		_case.x = ceil(point.x) - 1;
-	if (vector.z > EPSILON)
+	if (p == NEXT && vector.z > EPSILON)
 		_case.z = floor(point.z) + 1;
-	else
+	if (p == NEXT && vector.z <= EPSILON)
 		_case.z = ceil(point.z) - 1;
+	if (p == CURRENT)
+		_case = transf_coord(floor(point.x), floor(point.y), floor(point.z));
+	if (p == CURRENT && point.x - round(point.x) < EPSILON && vector.x < 0)
+		_case.x = round(point.x - 1);
+	if (p == CURRENT && point.y - round(point.y) < EPSILON && vector.y < 0)
+		_case.y = round(point.y - 1);
+	if (p == CURRENT && point.z - round(point.z) < EPSILON && vector.z < 0)
+		_case.z = round(point.z - 1);
 	return (_case);
 }
 
@@ -66,11 +74,11 @@ void	raycasting_put(t_coord point, t_cubdata *cub, t_point p, t_coord vector)
 		return (my_mlx_pixel_put(canvas, p.x, p.y, cub->f_color));
 	if (point.z >= 1 - EPSILON)
 		return (my_mlx_pixel_put(canvas, p.x, p.y, cub->c_color));
-	if (fabs(point.y + 1 - get_case(vector, point).y) < EPSILON)
+	if (fabs(point.y - get_case(vector, point, CURRENT).y) < EPSILON)
 		orientation = 'S';
-	else if (fabs(point.y - get_case(vector, point).y - 1) < EPSILON)
+	else if (fabs(point.y - get_case(vector, point, CURRENT).y - 1) < EPSILON)
 		orientation = 'N';
-	else if (fabs(point.x + 1 - get_case(vector, point).x) < EPSILON)
+	else if (fabs(point.x - get_case(vector, point, CURRENT).x) < EPSILON)
 		orientation = 'E';
 	else
 		orientation = 'W';
@@ -85,12 +93,12 @@ void	raycasting_put(t_coord point, t_cubdata *cub, t_point p, t_coord vector)
 /* returns coordinates of the intersection between vector and a wall */
 t_coord	intersection(t_coord start, t_coord vector, t_map *map)
 {
-	t_coord	_case;
-	t_coord	point;
-	double	min;
+	t_coord		_case;
+	t_coord		point;
+	double		min;
+	static int	count = 0;
 
-	min = 0;
-	_case = get_case(vector, start);
+	_case = (ft_bzero(&min, sizeof(int)), get_case(vector, start, NEXT));
 	if (fabs(vector.x) >= EPSILON)
 		min = fabs((_case.x - start.x) / vector.x);
 	else if (fabs(vector.y) >= EPSILON)
@@ -105,11 +113,11 @@ t_coord	intersection(t_coord start, t_coord vector, t_map *map)
 		min = fmin(min, fabs((_case.z - start.z) / vector.z));
 	point = transf_coord(start.x + min * vector.x, start.y + min * vector.y, \
 						start.z + min * vector.z);
-	_case = get_case(vector, point);
-	if (point.z <= EPSILON || point.z >= 1 - EPSILON || \
+	_case = get_case(vector, point, CURRENT);
+	if (count > 1000 || point.z <= EPSILON || point.z >= 1 - EPSILON || \
 		map->tab[(int)(_case.y)][(int)(_case.x)] == 1)
-		return (point);
-	return (intersection(point, vector, map));
+		return (ft_bzero(&count, sizeof(int)), point);
+	return (count++, intersection(point, vector, map));
 }
 
 /* go through every pixel of the screen and apply raycasting method */
@@ -137,5 +145,4 @@ void	raycasting(t_cubdata *cub)
 		i++;
 	}
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
-	printf("\n");
 }

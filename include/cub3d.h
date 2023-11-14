@@ -41,6 +41,9 @@
 
 # define EPSILON 10e-5
 
+# define CURRENT 1
+# define NEXT 2
+
 typedef struct s_map {
 	int	width;
 	int	height;
