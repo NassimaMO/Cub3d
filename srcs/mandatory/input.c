@@ -12,33 +12,39 @@
 
 #include "cub3d.h"
 
+/* checking if point coordinates is inside wall, returns 1 if it's the case ; 
+	changes player position and returns 0 if not */
+static int	check_collide(t_map *map, t_player *player, t_coord point)
+{
+	t_coord	_case;
+
+	_case = get_case(player->direction, point, CURRENT);
+	if (map->tab[(int)_case.x][(int)_case.y] == WALL)
+		return (1);
+	player->position = point;
+	return (0);
+}
+
 /* moving player with wasd keys input handling */
 static int	input_move(int key, t_player *player, t_map *map)
 {
 	if (key == XK_W || key == XK_w)
-	{
-		player->position.x += player->direction.x * player->speed;
-		player->position.y += player->direction.y * player->speed;
-	}
-	else if (key == XK_A || key == XK_a)
-	{
-		player->position.x += player->direction.y * player->speed;
-		player->position.y -= player->direction.x * player->speed;
-	}
-	else if (key == XK_S || key == XK_s)
-	{
-		player->position.x += -player->direction.x * player->speed;
-		player->position.y += -player->direction.y * player->speed;
-	}
-	else if (key == XK_D || key == XK_d)
-	{
-		player->position.x -= player->direction.y * player->speed;
-		player->position.y += player->direction.x * player->speed;
-	}
-	else
-		return (0);
-	(void)map;
-	return (1);
+		return (!check_collide(map, player, transf_coord(player->position.x + \
+		player->direction.x * player->speed, player->position.y + \
+		player->direction.y * player->speed, player->position.z)));
+	if (key == XK_A || key == XK_a)
+		return (!check_collide(map, player, transf_coord(player->position.x + \
+		player->direction.x * player->speed, player->position.y - \
+		player->direction.y * player->speed, player->position.z)));
+	if (key == XK_S || key == XK_s)
+		return (!check_collide(map, player, transf_coord(player->position.x - \
+		player->direction.x * player->speed, player->position.y - \
+		player->direction.y * player->speed, player->position.z)));
+	if (key == XK_D || key == XK_d)
+		return (!check_collide(map, player, transf_coord(player->position.x - \
+		player->direction.x * player->speed, player->position.y + \
+		player->direction.y * player->speed, player->position.z)));
+	return (0);
 }
 
 /* moving camera with arrows input handling */

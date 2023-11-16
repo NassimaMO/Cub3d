@@ -34,6 +34,7 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	return (vector);
 }
 
+/* get case integral coordinates of a point according to a vector */
 t_coord	get_case(t_coord vector, t_coord point, int p)
 {
 	t_coord	_case;
@@ -61,6 +62,8 @@ t_coord	get_case(t_coord vector, t_coord point, int p)
 	return (_case);
 }
 
+/* calculate wall orientation and put the right pixel color 
+according to intersection point*/
 void	raycasting_put(t_coord point, t_cubdata *cub, t_point p, t_coord vector)
 {
 	t_img_data	*canvas;

@@ -31,7 +31,6 @@
 # define ERR_PARSING -4
 
 # define MAIN 1
-
 # define FOV 90
 # define WALL 1
 # define SENS 0.174532925
@@ -104,6 +103,7 @@ t_coord	transf_coord(double x, double y, double z);
 void	print_coord(t_coord *coord);
 
 /* raycasting.c */
+t_coord	get_case(t_coord vector, t_coord point, int p);
 void	raycasting(t_cubdata *cub);
 
 #endif
