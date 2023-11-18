@@ -47,7 +47,13 @@ t_coord	transf_coord(double x, double y, double z)
 	return (p);
 }
 
+/* DEBUGGING */
 void	print_coord(t_coord *coord)
 {
 	printf("(%.3f, %.3f, %.3f)", coord->x, coord->y, coord->z);
+}
+
+double	time_diff(struct timespec *start, struct timespec *end)
+{
+	return (end->tv_sec - start->tv_sec) + 1e-9 * (end->tv_nsec - start->tv_nsec);
 }

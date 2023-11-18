@@ -20,6 +20,8 @@
 # include "math.h"
 
 # include <stdio.h>
+# include <time.h>
+# include <sys/time.h>
 
 # include <X11/keysym.h>
 
@@ -34,9 +36,6 @@
 # define FOV 90
 # define WALL 1
 # define SENS 0.174532925
-
-# define RATIOV 0.5
-# define RATIOH 0.5
 
 # define EPSILON 10e-5
 
@@ -101,6 +100,7 @@ char	*firstnotsp(char *str);
 int		nospacelen(char *str);
 t_coord	transf_coord(double x, double y, double z);
 void	print_coord(t_coord *coord);
+double	time_diff(struct timespec *start, struct timespec *end);
 
 /* raycasting.c */
 t_coord	get_case(t_coord vector, t_coord point, int p);
