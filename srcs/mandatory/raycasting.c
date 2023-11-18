@@ -134,11 +134,15 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 t_coord	intersection(t_coord start, t_coord vector, t_map *map)
 {
 	t_coord		_case;
-	t_coord		point;
 	double		min;
 	static int	count = 0;
 
-	_case = (ft_bzero(&min, sizeof(int)), get_case(vector, start, NEXT));
+	_case = get_case(vector, start, CURRENT);
+	if (count > 1000 || start.z <= EPSILON || start.z >= 1 - EPSILON || \
+		map->tab[(int)(_case.y)][(int)(_case.x)] == 1)
+		return (ft_bzero(&count, sizeof(int)), start);
+	_case = get_case(vector, start, NEXT);
+	min = 0;
 	if (fabs(vector.x) >= EPSILON)
 		min = fabs((_case.x - start.x) / vector.x);
 	else if (fabs(vector.y) >= EPSILON)
@@ -151,13 +155,9 @@ t_coord	intersection(t_coord start, t_coord vector, t_map *map)
 		min = fmin(min, fabs((_case.y - start.y) / vector.y));
 	if (fabs(vector.z) >= EPSILON)
 		min = fmin(min, fabs((_case.z - start.z) / vector.z));
-	point = transf_coord(start.x + min * vector.x, start.y + min * vector.y, \
-						start.z + min  * vector.z);
-	_case = get_case(vector, point, CURRENT);
-	if (count > 1000 || point.z <= EPSILON || point.z >= 1 - EPSILON || \
-		map->tab[(int)(_case.y)][(int)(_case.x)] == 1)
-		return (ft_bzero(&count, sizeof(int)), point);
-	return (count++, intersection(point, vector, map));
+	start = transf_coord(start.x + min * vector.x, start.y + min * vector.y, \
+						start.z + min * vector.z);
+	return (count++, intersection(start, vector, map));
 }
 /* iterative version*/
 /* t_coord	intersection(t_coord start, t_coord vector, t_map *map)

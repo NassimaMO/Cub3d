@@ -30,15 +30,6 @@ int	main(int argc, char *argv[])
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
 	cub.settings.fov = FOV;
 	cub.settings.sens = 1;
-
-	/* SEGFAULT */
-	/* for (int i = 0 ; i < 9 ; i++)
-		input_cam(XK_Left, &cub.player.direction, &cub.settings);
-	for (int i = 0 ; i < 2 ; i++)
-		input_move(XK_A, &cub.player, &cub.map);
-	for (int i = 0 ; i < 5 ; i++)
-		input_cam(XK_Left, &cub.player.direction, &cub.settings); */
-
 	raycasting(&cub);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);
 	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
