@@ -29,7 +29,6 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	vector.z = cub->player.direction.z;
 	norm = sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2));
 	angle = (cam.y - i) * cub->settings.fov * M_PI / (canvas->width * 180);
-	norm = sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2));
 	vector = transf_coord(vector.x, vector.y, vector.z + norm * tan(angle));
 	return (vector);
 }
