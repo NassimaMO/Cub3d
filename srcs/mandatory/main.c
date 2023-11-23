@@ -12,6 +12,9 @@
 
 #include "cub3d.h"
 
+int	input_move(int key, t_player *player, t_map *map);
+int	input_cam(int key, t_coord *direction, t_settings *settings);
+
 int	main(int argc, char *argv[])
 {
 	t_cubdata	cub;

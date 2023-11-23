@@ -26,30 +26,63 @@ int	check_collide(t_map *map, t_player *player, t_coord point)
 }
 
 /* moving player with wasd keys input handling */
-static int	input_move(int key, t_player *player, t_map *map)
+int	input_move(int key, t_player *player, t_map *map)
 {
+	/* DEBUGGING */
+	struct timespec	start;
+	struct timespec	end;
+	int		value;
+
+	clock_gettime(CLOCK_REALTIME, &start);
 	if (key == XK_W || key == XK_w)
-		return (!check_collide(map, player, transf_coord(player->position.x + \
+	{
+		value = !check_collide(map, player, transf_coord(player->position.x + \
 		player->direction.x * player->speed, player->position.y + \
-		player->direction.y * player->speed, player->position.z)));
+		player->direction.y * player->speed, player->position.z));
+		clock_gettime(CLOCK_REALTIME, &end);
+		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		return (value);
+	}
 	if (key == XK_A || key == XK_a)
-		return (!check_collide(map, player, transf_coord(player->position.x + \
+	{
+		value = !check_collide(map, player, transf_coord(player->position.x + \
 		player->direction.y * player->speed, player->position.y - \
-		player->direction.x * player->speed, player->position.z)));
+		player->direction.x * player->speed, player->position.z));
+		clock_gettime(CLOCK_REALTIME, &end);
+		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		return (value);
+	}
 	if (key == XK_S || key == XK_s)
-		return (!check_collide(map, player, transf_coord(player->position.x - \
+	{
+		value = !check_collide(map, player, transf_coord(player->position.x - \
 		player->direction.x * player->speed, player->position.y - \
-		player->direction.y * player->speed, player->position.z)));
+		player->direction.y * player->speed, player->position.z));
+		clock_gettime(CLOCK_REALTIME, &end);
+		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		return (value);
+	}
 	if (key == XK_D || key == XK_d)
-		return (!check_collide(map, player, transf_coord(player->position.x - \
+	{
+		value = !check_collide(map, player, transf_coord(player->position.x - \
 		player->direction.y * player->speed, player->position.y + \
-		player->direction.x * player->speed, player->position.z)));
+		player->direction.x * player->speed, player->position.z));
+		clock_gettime(CLOCK_REALTIME, &end);
+		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		return (value);
+	}
+	clock_gettime(CLOCK_REALTIME, &end);
+	//printf("input_move : %f seconds\n", time_diff(&start, &end));
 	return (0);
 }
 
 /* moving camera with arrows input handling */
-static int	input_cam(int key, t_coord *direction, t_settings *settings)
+int	input_cam(int key, t_coord *direction, t_settings *settings)
 {
+	/* DEBUGGING */
+	struct timespec	start;
+	struct timespec	end;
+
+	clock_gettime(CLOCK_REALTIME, &start);
 	if (key == XK_Up)
 		direction->z += SENS * settings->sens;
 	else if (key == XK_Down)
@@ -67,7 +100,13 @@ static int	input_cam(int key, t_coord *direction, t_settings *settings)
 		direction->z);
 	}
 	else
+	{
+		clock_gettime(CLOCK_REALTIME, &end);
+		//printf("input_cam : %f seconds\n", time_diff(&start, &end));
 		return (0);
+	}
+	clock_gettime(CLOCK_REALTIME, &end);
+	//printf("input_cam : %f seconds\n", time_diff(&start, &end));
 	return (1);
 }
 
