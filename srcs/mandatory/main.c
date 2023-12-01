@@ -12,8 +12,7 @@
 
 #include "cub3d.h"
 
-int	input_move(int key, t_player *player, t_map *map);
-int	input_cam(int key, t_coord *direction, t_settings *settings);
+int	input_cam(int key, t_coord *direction, t_settings *settings, t_img_data *canvas);
 
 int	main(int argc, char *argv[])
 {
@@ -25,15 +24,16 @@ int	main(int argc, char *argv[])
 	ft_bzero(&cub, sizeof(t_cubdata));
 	if (parse_info(argv[1], &cub))
 		return (print_errors(ERR_PARSING));
+	cub.settings.fov = FOV;
+	cub.settings.sens = 1;
 	data = (init_data(&cub.data), fill_data(argv[1], &cub), &cub.data);
 	if (parse_map_walls(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
-	cub.settings.fov = FOV;
-	cub.settings.sens = 1;
 	raycasting(&cub);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);
-	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
 	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, &cub);
+	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
 	mlx_loop(data->mlx_ptr);
+	/* average_time("free", 0, 0); */
 	return (free_cubdata(&cub), 0);
 }
