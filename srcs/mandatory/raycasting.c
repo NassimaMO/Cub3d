@@ -12,54 +12,34 @@
 
 #include "cub3d.h"
 
-/* changes pixel coordinates into 3 dimensional coordinates */
 t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 {
-	double	angle_ver;
-	double	angle_hor;
-	double	norm;
-	t_coord	cam;
+	t_coord	vector_hor;
+	t_coord	vector_ver;
 	t_coord	vector;
-	t_coord	axis;
+	/* DEBUGGING */
+	struct timespec	start;
+	struct timespec	end;
+	clock_gettime(CLOCK_REALTIME, &start);
 
-	cam = transf_coord(canvas->width / 2.0, canvas->height / 2.0, 0);
-	angle_hor = (j - cam.x) * cub->settings.fov * M_PI / (canvas->width * 180);
-	vector.x = cub->player.direction.x * cos(angle_hor) - \
-				cub->player.direction.y * sin(angle_hor);
-	vector.y = cub->player.direction.x * sin(angle_hor) + \
-				cub->player.direction.y * cos(angle_hor);
-	vector.z = cub->player.direction.z;
-	norm = sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2));
-	/* VECTOR NORMALIZATION */
-	/* vector.x /= norm;
-	vector.y /= norm;
-	vector.z /= norm; */
-
-	/* PREVIOUS ANGLE CALCULATION */
-	//angle_ver = (cam.y - i) * cub->settings.fov * M_PI / (canvas->width * 180);
-
-	/* NEW ANGLE CALCULATION */
-	angle_ver = atan((cam.y - i) * cos(angle_hor) * 2 * tan(cub->settings.fov / 2) / canvas->width);
-	
-	/* VECTOR COORDINATES VERSION 1 : CHANGE OF Z COMPONANT (VECTOR NO LONGER NORMALIZED) */
-	vector.z += norm * tan(angle_ver);
-
-	/* VECTOR COORDINATES VERSION 2 : ROTATION MATRICE AROUND AXIS APPLIED TO VECTOR */
-	/* axis = transf_coord(vector.y, -vector.x, vector.z);
-	vector = transf_coord((pow(axis.x, 2) * (1 - cos(angle_ver)) + cos(angle_ver)) * vector.x + \
-	(axis.x * axis.y * (1 - cos(angle_ver)) - axis.z * sin(angle_ver)) * vector.y + \
-	(axis.x * axis.z * (1 - cos(angle_ver)) + axis.y * sin(angle_ver)) * vector.z, \
-	(axis.x * axis.y * (1 - cos(angle_ver)) + axis.z * sin(angle_ver)) * vector.x + \
-	(pow(axis.y, 2) * (1 - cos(angle_ver)) + cos(angle_ver)) * vector.y + \
-	(axis.y * axis.z * (1 - cos(angle_ver)) - axis.x * sin(angle_ver)) * vector.z, \
-	(axis.x * axis.z * (1 - cos(angle_ver)) - axis.y * sin(angle_ver)) * vector.x + \
-	(axis.y * axis.z * (1 - cos(angle_ver)) + axis.x * sin(angle_ver)) * vector.y + \
-	(pow(axis.z, 2) * (1 - cos(angle_ver)) + cos(angle_ver)) * vector.z); */
-		
-	/* printf("i:%d j:%d (%f°, %f°)", i, j, angle_hor * 180 / M_PI, angle_ver * 180 / M_PI);
-	print_coord(&vector);
-	printf("\n"); */
-	(void)axis;
+	// perpendicular to player direction and parallel to xy plane
+	vector_hor = transf_coord(-cub->player.direction.y, cub->player.direction.x, 0);
+	// vectorial product between vector_hor and player direction, perpendicular to both
+	vector_ver = transf_coord(-cub->player.direction.z * cub->player.direction.x, \
+								-cub->player.direction.y * cub->player.direction.z, \
+								pow(cub->player.direction.y, 2) + pow(cub->player.direction.x, 2));
+	// vectors normalization
+	vector_hor = normalize(vector_hor, 1);
+	vector_ver = normalize(vector_ver, 1);
+	// pixel vector coordinates calculation
+	vector.x = cub->player.position.x + cub->player.direction.x + vector_hor.x \
+	* (j - canvas->width / 2.0) + vector_ver.x * (canvas->height / 2.0 - i);
+	vector.y = cub->player.position.y + cub->player.direction.y + vector_hor.y \
+	* (j - canvas->width / 2.0) + vector_ver.y * (canvas->height / 2.0 - i);
+	vector.z = cub->player.position.z + cub->player.direction.z + vector_hor.z \
+	* (j - canvas->width / 2.0) + vector_ver.z * (canvas->height / 2.0 - i);
+	clock_gettime(CLOCK_REALTIME, &end);
+	average_time("get_vector", time_diff(&start, &end));
 	return (vector);
 }
 
@@ -100,6 +80,10 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 	t_img_data	*img;
 	char		orientation;
 	t_coord		_case;
+	/* DEBUGGING */
+	struct timespec	start;
+	struct timespec	end;
+	clock_gettime(CLOCK_REALTIME, &start);
 
 	canvas = get_canvas(&cub->data, MAIN);
 	_case = get_case(vector, pint, CURRENT);
@@ -122,42 +106,49 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 	else
 		pimg.x = (pint.x - floor(pint.x)) * img->width;
 	my_mlx_pixel_put(canvas, pscr.x, pscr.y, ((int *)img->addr)[pimg.y * img->height + pimg.x]);
-	/* DEBUGGING */
-/*	printf("i:%d j:%d ", pscr.y, pscr.x);
-	print_coord(&pint);
-	print_coord(&vector);
-	printf("\n"); */
+	clock_gettime(CLOCK_REALTIME, &end);
+	average_time("raycasting_put", time_diff(&start, &end));
 }
 
 /* returns coordinates of the intersection between vector and a wall */
 /* recursive version */
-t_coord	intersection(t_coord start, t_coord vector, t_map *map)
+t_coord	intersection(t_coord point, t_coord vector, t_map *map)
 {
 	t_coord		_case;
 	double		min;
 	static int	count = 0;
+	/* DEBUGGING */
+	static struct timespec	start = {0};
+	struct timespec			end;
+	if (!start.tv_sec)
+		clock_gettime(CLOCK_REALTIME, &start);
 
-	_case = get_case(vector, start, CURRENT);
-	if (count > 1000 || start.z <= EPSILON || start.z >= 1 - EPSILON || \
+	_case = get_case(vector, point, CURRENT);
+	if (count > 1000 || point.z <= EPSILON || point.z >= 1 - EPSILON || \
 		map->tab[(int)(_case.y)][(int)(_case.x)] == 1)
-		return (ft_bzero(&count, sizeof(int)), start);
-	_case = get_case(vector, start, NEXT);
+	{
+		clock_gettime(CLOCK_REALTIME, &end);
+		average_time("intersection", time_diff(&start, &end));
+		ft_bzero(&start, sizeof(struct timespec));
+		return (ft_bzero(&count, sizeof(int)), point);
+	}
+	_case = get_case(vector, point, NEXT);
 	min = 0;
 	if (fabs(vector.x) >= EPSILON)
-		min = fabs((_case.x - start.x) / vector.x);
+		min = fabs((_case.x - point.x) / vector.x);
 	else if (fabs(vector.y) >= EPSILON)
-		min = fabs((_case.y - start.y) / vector.y);
+		min = fabs((_case.y - point.y) / vector.y);
 	else if (fabs(vector.z) >= EPSILON)
-		min = fabs((_case.z - start.z) / vector.z);
+		min = fabs((_case.z - point.z) / vector.z);
 	if (fabs(vector.x) >= EPSILON)
-		min = fmin(min, fabs((_case.x - start.x) / vector.x));
+		min = fmin(min, fabs((_case.x - point.x) / vector.x));
 	if (fabs(vector.y) >= EPSILON)
-		min = fmin(min, fabs((_case.y - start.y) / vector.y));
+		min = fmin(min, fabs((_case.y - point.y) / vector.y));
 	if (fabs(vector.z) >= EPSILON)
-		min = fmin(min, fabs((_case.z - start.z) / vector.z));
-	start = transf_coord(start.x + min * vector.x, start.y + min * vector.y, \
-						start.z + min * vector.z);
-	return (count++, intersection(start, vector, map));
+		min = fmin(min, fabs((_case.z - point.z) / vector.z));
+	point = transf_coord(point.x + min * vector.x, point.y + min * vector.y, \
+						point.z + min * vector.z);
+	return (count++, intersection(point, vector, map));
 }
 /* iterative version*/
 /* t_coord	intersection(t_coord start, t_coord vector, t_map *map)
@@ -205,8 +196,8 @@ void	raycasting(t_cubdata *cub)
 	/* DEBUGGING */
 	struct timespec	start;
 	struct timespec	end;
-
 	clock_gettime(CLOCK_REALTIME, &start);
+
 	i = 0;
 	data = &cub->data;
 	canvas = get_canvas(data, MAIN);
@@ -224,5 +215,5 @@ void	raycasting(t_cubdata *cub)
 	}
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
 	clock_gettime(CLOCK_REALTIME, &end);
-	//printf("raycasting : %f seconds\n", time_diff(&start, &end));
+	average_time("raycasting", time_diff(&start, &end));
 }

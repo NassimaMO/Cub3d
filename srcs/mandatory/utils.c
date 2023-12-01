@@ -47,6 +47,16 @@ t_coord	transf_coord(double x, double y, double z)
 	return (p);
 }
 
+t_coord	normalize(t_coord vector, double new_norm)
+{
+	double norm;
+
+	norm = sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2));
+	return (transf_coord(vector.x * new_norm / norm, \
+							 vector.y * new_norm / norm, \
+							 vector.z * new_norm / norm));
+}
+
 /* DEBUGGING */
 void	print_coord(t_coord *coord)
 {
@@ -55,5 +65,49 @@ void	print_coord(t_coord *coord)
 
 double	time_diff(struct timespec *start, struct timespec *end)
 {
-	return (end->tv_sec - start->tv_sec) + 1e-9 * (end->tv_nsec - start->tv_nsec);
+	return (1e9 * (end->tv_sec - start->tv_sec) + end->tv_nsec - start->tv_nsec);
+}
+
+double	average_time(const char *fname, double time)
+{
+	static double	sums[10] = {0};
+	static int		counts[10] = {0};
+	static char		*names[10] = {NULL};
+
+	for (int i = 0 ; i < 10 ; i++)
+	{
+		if (names[i] && ft_strlen(names[i]) == ft_strlen(fname) && \
+						!ft_strncmp(fname, names[i], ft_strlen(names[i])))
+		{
+			if (time >= 0)
+			{
+				sums[i] += time;
+				counts[i] += 1;
+			}
+			if (counts[i])
+				return (sums[i] / counts[i]);
+			return (0);
+		}
+		else if (!names[i])
+			names[i--] = ft_strdup(fname);
+	}
+	return (0);
+}
+
+void	print_averages(void)
+{
+	double	x;
+
+	x = average_time("raycasting", -1);
+	printf("average raycasting time : %dns(%.3fs)\n", (int)x, x * 1e-9);
+	x = average_time("intersection", -1);
+	printf("average intersection time : %dns(%.3fs)\n", (int)x, x * 1e-9);
+	x = average_time("raycasting_put", -1);
+	printf("average raycasting_put time : %dns(%.3fs)\n", (int)x, x * 1e-9);
+	x = average_time("get_vector", -1);
+	printf("average get_vector time : %dns(%.3fs)\n", (int)x, x * 1e-9);
+	x = average_time("input_move", -1);
+	printf("average input_move time : %dns(%.3fs)\n", (int)x, x * 1e-9);
+	x = average_time("input_cam", -1);
+	printf("average input_cam time : %dns(%.3fs)\n\n", (int)x, x * 1e-9);
 }

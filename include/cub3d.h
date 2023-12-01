@@ -99,8 +99,12 @@ int		backtracking(t_map *map, int i, int j);
 char	*firstnotsp(char *str);
 int		nospacelen(char *str);
 t_coord	transf_coord(double x, double y, double z);
+t_coord	normalize(t_coord vector, double new_norm);
+// DEBBUG
 void	print_coord(t_coord *coord);
 double	time_diff(struct timespec *start, struct timespec *end);
+double	average_time(const char *fname, double time);
+void	print_averages(void);
 
 /* raycasting.c */
 t_coord	get_case(t_coord vector, t_coord point, int p);

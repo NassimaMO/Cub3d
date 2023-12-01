@@ -17,106 +17,140 @@
 int	check_collide(t_map *map, t_player *player, t_coord point)
 {
 	t_coord	_case;
+	t_coord	tmp;
 
-	_case = get_case(player->direction, point, CURRENT);
-	if (map->tab[(int)_case.x][(int)_case.y] == WALL)
+	tmp = transf_coord(point.x - 0.01, point.y - 0.01, point.z - 0.01);
+	_case = get_case(player->direction, tmp, CURRENT);
+	if (_case.y >= map->height || _case.x >= map->width || \
+			map->tab[(int)_case.y][(int)_case.x] == WALL)
+		return (1);
+	tmp = transf_coord(point.x + 0.01, point.y + 0.01, point.z + 0.01);
+	_case = get_case(player->direction, tmp, CURRENT);
+	if (_case.y >= map->height || _case.x >= map->width || \
+			map->tab[(int)_case.y][(int)_case.x] == WALL)
 		return (1);
 	player->position = point;
 	return (0);
 }
 
 /* moving player with wasd keys input handling */
-int	input_move(int key, t_player *player, t_map *map)
+int	input_move(int key, t_player *player, t_map *map, t_coord direction)
 {
+	int		value;
 	/* DEBUGGING */
 	struct timespec	start;
 	struct timespec	end;
-	int		value;
-
 	clock_gettime(CLOCK_REALTIME, &start);
+
 	if (key == XK_W || key == XK_w)
 	{
 		value = !check_collide(map, player, transf_coord(player->position.x + \
-		player->direction.x * player->speed, player->position.y + \
-		player->direction.y * player->speed, player->position.z));
+		direction.x * player->speed, player->position.y + \
+		direction.y * player->speed, player->position.z));
+		//printf("input : move forward\n");
 		clock_gettime(CLOCK_REALTIME, &end);
-		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		average_time("input_move", time_diff(&start, &end));
 		return (value);
 	}
 	if (key == XK_A || key == XK_a)
 	{
 		value = !check_collide(map, player, transf_coord(player->position.x + \
-		player->direction.y * player->speed, player->position.y - \
-		player->direction.x * player->speed, player->position.z));
+		direction.y * player->speed, player->position.y - \
+		direction.x * player->speed, player->position.z));
+		//printf("input : move left\n");
 		clock_gettime(CLOCK_REALTIME, &end);
-		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		average_time("input_move", time_diff(&start, &end));
 		return (value);
 	}
 	if (key == XK_S || key == XK_s)
 	{
 		value = !check_collide(map, player, transf_coord(player->position.x - \
-		player->direction.x * player->speed, player->position.y - \
-		player->direction.y * player->speed, player->position.z));
+		direction.x * player->speed, player->position.y - \
+		direction.y * player->speed, player->position.z));
+		//printf("input : move backward\n");
 		clock_gettime(CLOCK_REALTIME, &end);
-		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		average_time("input_move", time_diff(&start, &end));
 		return (value);
 	}
 	if (key == XK_D || key == XK_d)
 	{
 		value = !check_collide(map, player, transf_coord(player->position.x - \
-		player->direction.y * player->speed, player->position.y + \
-		player->direction.x * player->speed, player->position.z));
+		direction.y * player->speed, player->position.y + \
+		direction.x * player->speed, player->position.z));
+		//printf("input : move right\n");
 		clock_gettime(CLOCK_REALTIME, &end);
-		//printf("input_move : %f seconds\n", time_diff(&start, &end));
+		average_time("input_move", time_diff(&start, &end));
 		return (value);
 	}
+	//printf("input : move other\n");
 	clock_gettime(CLOCK_REALTIME, &end);
-	//printf("input_move : %f seconds\n", time_diff(&start, &end));
+	average_time("input_move", time_diff(&start, &end));
 	return (0);
 }
 
-/* moving camera with arrows input handling */
-int	input_cam(int key, t_coord *direction, t_settings *settings)
+/* moving camera with arrows input handling (using spherical coordinates)*/
+int	input_cam(int key, t_coord *direction, t_settings *settings, t_img_data *canvas)
 {
+	double			norm;
+	double			angle_hor;
+	double			angle_ver;
 	/* DEBUGGING */
 	struct timespec	start;
 	struct timespec	end;
-
 	clock_gettime(CLOCK_REALTIME, &start);
+
+	norm = sqrt(pow(direction->x, 2) + pow(direction->y, 2) + pow(direction->z, 2));
+	angle_hor = atan2(direction->y, direction->x);
+	angle_ver = asin(direction->z / norm);
 	if (key == XK_Up)
-		direction->z += SENS * settings->sens;
-	else if (key == XK_Down)
-		direction->z -= SENS * settings->sens;
-	else if (key == XK_Left)
 	{
-		*direction = transf_coord(direction->x * cos(SENS) + direction->y * \
-		sin(SENS), -direction->x * sin(SENS) + direction->y * cos(SENS), \
-		direction->z);
+		angle_ver += SENS * settings->sens;
+		/* printf("input : cam up\n"); */
+	}
+	else if (key == XK_Down)
+	{
+		angle_ver -= SENS * settings->sens;
+		/* printf("input : cam down\n"); */
 	}
 	else if (key == XK_Right)
 	{
-		*direction = transf_coord(direction->x * cos(SENS) - direction->y * \
-		sin(SENS), direction->x * sin(SENS) + direction->y * cos(SENS), \
-		direction->z);
+		angle_hor += SENS * settings->sens;
+		/* printf("input : cam right\n"); */
+	}
+	else if (key == XK_Left)
+	{
+		angle_hor -= SENS * settings->sens;
+		/* printf("input : cam left\n"); */
 	}
 	else
 	{
-		clock_gettime(CLOCK_REALTIME, &end);
-		//printf("input_cam : %f seconds\n", time_diff(&start, &end));
+		//printf("input : other\n");
 		return (0);
 	}
+	if (angle_ver > M_PI / 2.0)
+		angle_ver = M_PI / 2.0;
+	if (angle_ver < -M_PI / 2.0)
+		angle_ver = -M_PI / 2.0;
+	direction->x = norm * cos(angle_ver) * cos(angle_hor);
+	direction->y = norm * cos(angle_ver) * sin(angle_hor);
+	direction->z = norm * sin(angle_ver);
+	*direction = normalize(*direction, canvas->width / (2 * tan(settings->fov / 2)));
 	clock_gettime(CLOCK_REALTIME, &end);
-	//printf("input_cam : %f seconds\n", time_diff(&start, &end));
+	average_time("input_cam", time_diff(&start, &end));
 	return (1);
 }
 
 /* general function for input handling */
 int	input(int key, t_cubdata *cub)
 {
+	t_coord	direction;
+
 	if (input_escape(key, &cub->data))
 		return (1);
-	if (input_move(key, &cub->player, &cub->map) || \
-		input_cam(key, &cub->player.direction, &cub->settings))
-		return (raycasting(cub), mlx_flush_event(cub->data.mlx_ptr), 1);
+	direction = normalize(cub->player.direction, 1);
+	if (input_move(key, &cub->player, &cub->map, direction) || \
+		input_cam(key, &cub->player.direction, &cub->settings, \
+					get_canvas(&cub->data, MAIN)))
+		return (raycasting(cub), mlx_flush_event(cub->data.mlx_ptr), print_averages(), 1);
 	return (0);
 }
