@@ -14,6 +14,8 @@
 
 t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 {
+	/* t_coord	vector_hor;
+	t_coord	vector_ver; */
 	t_coord	vector;
 	t_coord	cam;
 	/* DEBUGGING */
@@ -21,7 +23,6 @@ t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 	struct timespec	end;
 	clock_gettime(CLOCK_REALTIME, &start);
 
-	// pixel vector coordinates calculation
 	cam.x = (j - canvas->width / 2.0);
 	cam.y = (canvas->height / 2.0 - i);
 	vector.x = cub->player.pos.x + cub->cam.dir.x + cub->cam.hor.x \
@@ -78,11 +79,11 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 	clock_gettime(CLOCK_REALTIME, &start);
 
 	canvas = get_canvas(&cub->data, MAIN);
-	_case = get_case(vector, pint, CURRENT);
 	if (pint.z <= EPSILON)
 		return (my_mlx_pixel_put(canvas, pscr.x, pscr.y, cub->f_color));
 	if (pint.z >= 1 - EPSILON)
 		return (my_mlx_pixel_put(canvas, pscr.x, pscr.y, cub->c_color));
+	_case = get_case(vector, pint, CURRENT);
 	if (fabs(pint.y - _case.y) < EPSILON)
 		orientation = 'S';
 	else if (fabs(pint.y - _case.y - 1) < EPSILON)

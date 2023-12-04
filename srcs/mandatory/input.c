@@ -121,9 +121,12 @@ int	input_cam(int key, t_coord *dir, t_cubdata *cub, t_img_data *canvas)
 	dir->y = norm * cos(angle_ver) * sin(angle_hor);
 	dir->z = norm * sin(angle_ver);
 	*dir = normalize(*dir, canvas->width / (2 * tan(cub->settings.fov / 2)));
-	cub->cam.hor = normalize(transf_coord(-dir->y, dir->x, 0), 1);
-	cub->cam.ver = normalize(transf_coord(-dir->z * dir->x, -dir->y * dir->z, \
-				pow(dir->y, 2) + pow(dir->x, 2)), 1);
+	cub->cam.hor = transf_coord(-cub->cam.dir.y, cub->cam.dir.x, 0);
+	cub->cam.ver.x = -cub->cam.dir.z * cub->cam.dir.x;
+	cub->cam.ver.y = -cub->cam.dir.y * cub->cam.dir.z;
+	cub->cam.ver.z = pow(cub->cam.dir.y, 2) + pow(cub->cam.dir.x, 2);
+	cub->cam.hor = normalize(cub->cam.hor, 1);
+	cub->cam.ver = normalize(cub->cam.ver, 1);
 	clock_gettime(CLOCK_REALTIME, &end);
 	average_time("input_cam", time_diff(&start, &end));
 	return (1);

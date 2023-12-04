@@ -30,7 +30,7 @@ int	main(int argc, char *argv[])
 	raycasting(&cub);
 
 	/* DEBUGGING */
-	/* for (int i = 0 ; i < 2 ; i++)
+	for (int i = 0 ; i < 2 ; i++)
 		input(XK_Up, &cub);
 	for (int i = 0 ; i < 4 ; i++)
 		input(XK_Down, &cub);
@@ -54,7 +54,7 @@ int	main(int argc, char *argv[])
 		input(XK_s, &cub);
 	for (int i = 0 ; i < 2 ; i++)
 		input(XK_w, &cub);
-	input(XK_Escape, &cub); */
+	input(XK_Escape, &cub);
 	
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);
 	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, &cub);
