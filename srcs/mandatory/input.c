@@ -122,7 +122,7 @@ int	input_cam(int key, t_coord *direction, t_settings *settings, t_img_data *can
 		angle_hor -= SENS * settings->sens;
 		/* printf("input : cam left\n"); */
 	}
-	else
+	else if (key == XK_Left)
 	{
 		//printf("input : other\n");
 		return (0);

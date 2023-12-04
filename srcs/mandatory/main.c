@@ -34,5 +34,6 @@ int	main(int argc, char *argv[])
 	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, &cub);
 	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);
 	mlx_loop(data->mlx_ptr);
+	/* average_time("free", 0, 0); */
 	return (free_cubdata(&cub), 0);
 }
