@@ -30,20 +30,23 @@ void	init_data(t_data *data)
 }
 
 /* initializes player ; give pos and character of player in the file */
-static void	init_p(t_player *player, int i, int j, char c)
+static void	init_p(t_cubdata *cub, int i, int j, char c)
 {
+	t_img_data	*canvas;
+
+	canvas = get_canvas(&cub->data, MAIN);
 	if (c == 'N')
-		player->direction.y = -1;
+		cub->player.direction.y = -canvas->width / (2 * tan(cub->settings.fov / 2));
 	if (c == 'S')
-		player->direction.y = 1;
+		cub->player.direction.y = canvas->width / (2 * tan(cub->settings.fov / 2));
 	if (c == 'W')
-		player->direction.x = -1;
+		cub->player.direction.x = -canvas->width / (2 * tan(cub->settings.fov / 2));
 	if (c == 'E')
-		player->direction.x = 1;
-	player->position.x = j + 0.5;
-	player->position.y = i + 0.5;
-	player->position.z = 0.5;
-	player->speed = 0.25;
+		cub->player.direction.x = canvas->width / (2 * tan(cub->settings.fov / 2));
+	cub->player.position.x = j + 0.5;
+	cub->player.position.y = i + 0.5;
+	cub->player.position.z = 0.5;
+	cub->player.speed = 0.25;
 }
 
 /* fills map tab with file data ; should be called after fill_data */
@@ -64,7 +67,7 @@ static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 		{
 			cub->map.tab[i][j] = -1;
 			if (s[j] == 'N' || s[j] == 'S' || s[j] == 'W' || s[j] == 'E')
-				cub->map.tab[i][j] = (init_p(&cub->player, i, j, s[j]), s[j]);
+				cub->map.tab[i][j] = (init_p(cub, i, j, s[j]), s[j]);
 			if ('0' <= s[j] && s[j] <= '9')
 				cub->map.tab[i][j] = s[j] - '0';
 			j++;
