@@ -59,9 +59,14 @@ typedef struct s_settings {
 	double	sens;
 }	t_settings;
 
+typedef struct s_cam {
+	t_coord	dir;
+	t_coord	hor;
+	t_coord	ver;
+}	t_cam;
+
 typedef struct s_player {
-	t_coord	position;
-	t_coord	direction;
+	t_coord	pos;
 	double	speed;
 }	t_player;
 
@@ -69,10 +74,11 @@ typedef struct s_cubdata {
 	t_data		data;
 	t_map		map;
 	t_map		valid_map;
+	t_player	player;
+	t_cam		cam;
+	t_settings	settings;
 	int			f_color;
 	int			c_color;
-	t_player	player;
-	t_settings	settings;
 }	t_cubdata;
 
 /* error.c */
@@ -103,7 +109,7 @@ t_coord	normalize(t_coord vector, double new_norm);
 // DEBBUG
 void	print_coord(t_coord *coord);
 double	time_diff(struct timespec *start, struct timespec *end);
-double	average_time(const char *fname, double time, double nb);
+double	average_time(const char *fname, double time);
 void	print_averages(void);
 
 /* raycasting.c */

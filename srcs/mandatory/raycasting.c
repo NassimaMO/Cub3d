@@ -14,32 +14,25 @@
 
 t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 {
-	t_coord	vector_hor;
-	t_coord	vector_ver;
+	/* t_coord	vector_hor;
+	t_coord	vector_ver; */
 	t_coord	vector;
+	t_coord	cam;
 	/* DEBUGGING */
-	/* struct timespec	start;
+	struct timespec	start;
 	struct timespec	end;
-	clock_gettime(CLOCK_REALTIME, &start); */
+	clock_gettime(CLOCK_REALTIME, &start);
 
-	// perpendicular to player direction and parallel to xy plane
-	vector_hor = transf_coord(-cub->player.direction.y, cub->player.direction.x, 0);
-	// vectorial product between vector_hor and player direction, perpendicular to both
-	vector_ver = transf_coord(-cub->player.direction.z * cub->player.direction.x, \
-								-cub->player.direction.y * cub->player.direction.z, \
-								pow(cub->player.direction.y, 2) + pow(cub->player.direction.x, 2));
-	// vectors normalization
-	vector_hor = normalize(vector_hor, 1);
-	vector_ver = normalize(vector_ver, 1);
-	// pixel vector coordinates calculation
-	vector.x = cub->player.position.x + cub->player.direction.x + vector_hor.x \
-	* (j - canvas->width / 2.0) + vector_ver.x * (canvas->height / 2.0 - i);
-	vector.y = cub->player.position.y + cub->player.direction.y + vector_hor.y \
-	* (j - canvas->width / 2.0) + vector_ver.y * (canvas->height / 2.0 - i);
-	vector.z = cub->player.position.z + cub->player.direction.z + vector_hor.z \
-	* (j - canvas->width / 2.0) + vector_ver.z * (canvas->height / 2.0 - i);
-	/* clock_gettime(CLOCK_REALTIME, &end);
-	average_time("get_vector", time_diff(&start, &end), 100); */
+	cam.x = (j - canvas->width / 2.0);
+	cam.y = (canvas->height / 2.0 - i);
+	vector.x = cub->player.pos.x + cub->cam.dir.x + cub->cam.hor.x \
+	* cam.x + cub->cam.ver.x * cam.y;
+	vector.y = cub->player.pos.y + cub->cam.dir.y + cub->cam.hor.y \
+	* cam.x + cub->cam.ver.y * cam.y;
+	vector.z = cub->player.pos.z + cub->cam.dir.z + cub->cam.hor.z \
+	* cam.x + cub->cam.ver.z * cam.y;
+	clock_gettime(CLOCK_REALTIME, &end);
+	average_time("get_vector", time_diff(&start, &end));
 	return (vector);
 }
 
@@ -81,16 +74,16 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 	char		orientation;
 	t_coord		_case;
 	/* DEBUGGING */
-	/* struct timespec	start;
+	struct timespec	start;
 	struct timespec	end;
-	clock_gettime(CLOCK_REALTIME, &start); */
+	clock_gettime(CLOCK_REALTIME, &start);
 
 	canvas = get_canvas(&cub->data, MAIN);
-	_case = get_case(vector, pint, CURRENT);
 	if (pint.z <= EPSILON)
 		return (my_mlx_pixel_put(canvas, pscr.x, pscr.y, cub->f_color));
 	if (pint.z >= 1 - EPSILON)
 		return (my_mlx_pixel_put(canvas, pscr.x, pscr.y, cub->c_color));
+	_case = get_case(vector, pint, CURRENT);
 	if (fabs(pint.y - _case.y) < EPSILON)
 		orientation = 'S';
 	else if (fabs(pint.y - _case.y - 1) < EPSILON)
@@ -106,8 +99,8 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 	else
 		pimg.x = (pint.x - floor(pint.x)) * img->width;
 	my_mlx_pixel_put(canvas, pscr.x, pscr.y, ((int *)img->addr)[pimg.y * img->height + pimg.x]);
-	/* clock_gettime(CLOCK_REALTIME, &end);
-	average_time("raycasting_put", time_diff(&start, &end), 100); */
+	clock_gettime(CLOCK_REALTIME, &end);
+	average_time("raycasting_put", time_diff(&start, &end));
 }
 
 /* returns coordinates of the intersection between vector and a wall */
@@ -117,19 +110,19 @@ t_coord	intersection(t_coord point, t_coord vector, t_map *map)
 	t_coord		_case;
 	double		min;
 	static int	count = 0;
-	/* DEBUGGING */
-	/* static struct timespec	start = {0};
+	//DEBUGGING
+	static struct timespec	start = {0};
 	struct timespec			end;
 	if (!start.tv_sec)
-		clock_gettime(CLOCK_REALTIME, &start); */
+		clock_gettime(CLOCK_REALTIME, &start);
 
 	_case = get_case(vector, point, CURRENT);
 	if (count > 1000 || point.z <= EPSILON || point.z >= 1 - EPSILON || \
 		map->tab[(int)(_case.y)][(int)(_case.x)] == 1)
 	{
-		/* clock_gettime(CLOCK_REALTIME, &end);
-		average_time("intersection", time_diff(&start, &end), 100);
-		ft_bzero(&start, sizeof(struct timespec)); */
+		clock_gettime(CLOCK_REALTIME, &end);
+		average_time("intersection", time_diff(&start, &end));
+		ft_bzero(&start, sizeof(struct timespec));
 		return (ft_bzero(&count, sizeof(int)), point);
 	}
 	_case = get_case(vector, point, NEXT);
@@ -150,40 +143,6 @@ t_coord	intersection(t_coord point, t_coord vector, t_map *map)
 						point.z + min * vector.z);
 	return (count++, intersection(point, vector, map));
 }
-/* iterative version*/
-/* t_coord	intersection(t_coord start, t_coord vector, t_map *map)
-{
-	t_coord		_case;
-	t_coord		point;
-	double		min;
-	int			count;
-
-	count = 0;
-	point = start;
-	_case = get_case(vector, point, CURRENT);
-	while (count++ < 1000 && point.z > EPSILON && point.z < 1 - EPSILON && \
-		map->tab[(int)(_case.y)][(int)(_case.x)] != 1)
-	{
-		min = 0;
-		_case = get_case(vector, point, NEXT);
-		if (fabs(vector.x) >= EPSILON)
-			min = fabs((_case.x - start.x) / vector.x);
-		else if (fabs(vector.y) >= EPSILON)
-			min = fabs((_case.y - start.y) / vector.y);
-		else if (fabs(vector.z) >= EPSILON)
-			min = fabs((_case.z - start.z) / vector.z);
-		if (fabs(vector.x) >= EPSILON)
-			min = fmin(min, fabs((_case.x - start.x) / vector.x));
-		if (fabs(vector.y) >= EPSILON)
-			min = fmin(min, fabs((_case.y - start.y) / vector.y));
-		if (fabs(vector.z) >= EPSILON)
-			min = fmin(min, fabs((_case.z - start.z) / vector.z));
-		point = transf_coord(start.x + min * vector.x, \
-				start.y + min * vector.y, start.z + min * vector.z);
-		_case = get_case(vector, point, CURRENT);
-	}
-	return (point);
-} */
 
 /* go through every pixel of the screen and apply raycasting method */
 void	raycasting(t_cubdata *cub)
@@ -194,9 +153,9 @@ void	raycasting(t_cubdata *cub)
 	int			j;
 	t_coord		vector;
 	/* DEBUGGING */
-	/* struct timespec	start;
+	struct timespec	start;
 	struct timespec	end;
-	clock_gettime(CLOCK_REALTIME, &start); */
+	clock_gettime(CLOCK_REALTIME, &start);
 
 	i = 0;
 	data = &cub->data;
@@ -207,13 +166,13 @@ void	raycasting(t_cubdata *cub)
 		while (j < canvas->width)
 		{
 			vector = get_vector(canvas, j, i, cub);
-			raycasting_put(intersection(cub->player.position, \
+			raycasting_put(intersection(cub->player.pos, \
 			vector, &cub->map), cub, transf_point(j, i), vector);
 			j++;
 		}
 		i++;
 	}
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
-	/* clock_gettime(CLOCK_REALTIME, &end);
-	average_time("raycasting", time_diff(&start, &end), 10); */
+	clock_gettime(CLOCK_REALTIME, &end);
+	average_time("raycasting", time_diff(&start, &end));
 }
