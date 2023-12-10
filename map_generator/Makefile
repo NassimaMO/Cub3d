@@ -1,6 +1,6 @@
 OBJS_DIR				=	./objs
 
-LIBFT_DIR				=	libft
+LIBFT_DIR				=	../srcs/libft
 
 LIBFT					=	$(LIBFT_DIR)/libft.a
 
