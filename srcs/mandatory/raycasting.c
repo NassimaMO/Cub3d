@@ -118,7 +118,8 @@ t_coord	intersection(t_coord point, t_coord vector, t_map *map)
 
 	_case = get_case(vector, point, CURRENT);
 	if (count > 1000 || point.z <= EPSILON || point.z >= 1 - EPSILON || \
-		map->tab[(int)(_case.y)][(int)(_case.x)] == 1)
+		(int)_case.y >= map->height || (int)_case.x >= map->width || (int)_case.y < 0 || \
+			(int)_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
 	{
 		clock_gettime(CLOCK_REALTIME, &end);
 		average_time("intersection", time_diff(&start, &end));

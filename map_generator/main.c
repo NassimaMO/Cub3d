@@ -4,6 +4,9 @@
 #include <time.h>
 #include "libft.h"
 
+/* (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) */
+# define S_FLAG 420
+
 void	random_fill(int fd, int player)
 {
 	static int	count = 0;
@@ -65,15 +68,15 @@ int	main(int argc, char **argv)
 		write(2, "Error args ; need height and width (integers, >= 3).\n", 53);
 		return (EXIT_FAILURE);
 	}
-	fd = open("../map_generated.cub", O_CREAT | O_RDWR | O_TRUNC);
+	fd = open("../map_generated.cub", O_CREAT | O_RDWR | O_TRUNC, S_FLAG);
 	if (fd < 0 || read(fd, NULL, 0) < 0)
 		return (write(2, "Error file.\n", 12), EXIT_FAILURE);
-	write(fd, "NO ./pics/bluestone.xpm\n\n", 25);
+	write(fd, "NO ./pics/colorstone.xpm\n\n", 26);
 	write(fd, "SO ./pics/colorstone.xpm\n\n", 26);
-	write(fd, "WE ./pics/greystone.xpm\n\n", 25);
-	write(fd, "EA ./pics/redbrick.xpm\n\n", 24);
-	write(fd, "F 220,100,0\n\n", 13);
-	write(fd, "C 225,30,0\n\n", 12);
+	write(fd, "WE ./pics/colorstone.xpm\n\n", 26);
+	write(fd, "EA ./pics/colorstone.xpm\n\n", 26);
+	write(fd, "F 100,100,100\n\n", 15);
+	write(fd, "C 150,150,150\n\n", 15);
 	srand(time(NULL));
 	create_map(ft_atoi(argv[1]), ft_atoi(argv[2]), fd);
 	return (EXIT_SUCCESS);

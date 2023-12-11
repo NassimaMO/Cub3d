@@ -22,13 +22,13 @@ int	check_collide(t_map *map, t_player *player, t_coord point, \
 
 	tmp = transf_coord(point.x - 0.01, point.y - 0.01, point.z - 0.01);
 	_case = get_case(direction, tmp, CURRENT);
-	if (_case.y >= map->height || _case.x >= map->width || \
-			map->tab[(int)_case.y][(int)_case.x] == WALL)
+	if ((int)_case.y >= map->height || (int)_case.x >= map->width || (int)_case.y < 0 || \
+			(int)_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
 		return (1);
 	tmp = transf_coord(point.x + 0.01, point.y + 0.01, point.z + 0.01);
 	_case = get_case(direction, tmp, CURRENT);
-	if (_case.y >= map->height || _case.x >= map->width || \
-			map->tab[(int)_case.y][(int)_case.x] == WALL)
+	if ((int)_case.y >= map->height || (int)_case.x >= map->width || (int)_case.y < 0 || \
+			(int)_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
 		return (1);
 	player->pos = point;
 	return (0);
@@ -135,13 +135,10 @@ int	input_cam(int key, t_coord *dir, t_cubdata *cub, t_img_data *canvas)
 /* general function for input handling */
 int	input(int key, t_cubdata *cub)
 {
-	t_coord	direction;
-
 	if (input_escape(key, &cub->data))
 		return (1);
-	direction = normalize(cub->cam.dir, 1);
-	if (input_move(key, &cub->player, &cub->map, direction) || \
+	if (input_move(key, &cub->player, &cub->map, normalize(cub->cam.dir, 1)) || \
 		input_cam(key, &cub->cam.dir, cub, get_canvas(&cub->data, MAIN)))
-		return (raycasting(cub), mlx_flush_event(cub->data.mlx_ptr), print_averages(), 1);
+		return (raycasting(cub), mlx_flush_event(cub->data.mlx_ptr),/*  print_averages(),  */1);
 	return (0);
 }

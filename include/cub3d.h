@@ -30,7 +30,7 @@
 # define ERROR -1
 # define ERR_MEMORY -2
 # define ERR_ARGS -3
-# define ERR_PARSING -4
+# define ERR_PARSING 0
 
 # define MAIN 1
 # define FOV 90
@@ -91,6 +91,8 @@ int		fill_data(char *path, t_cubdata *cub);
 
 /* input.c */
 int		input(int key, t_cubdata *cub);
+int		input_move(int key, t_player *player, t_map *map, t_coord direction);
+int		input_cam(int key, t_coord *dir, t_cubdata *cub, t_img_data *canvas);
 
 /* memory.c */
 int		alloc_map(t_map *map);

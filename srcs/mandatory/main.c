@@ -27,6 +27,10 @@ int	main(int argc, char *argv[])
 	data = (init_data(&cub.data), fill_data(argv[1], &cub), &cub.data);
 	if (parse_map_walls(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
+
+	for (int i = 0 ; i < 5 ; i++)
+		input_move(XK_w, &cub.player, &cub.map, normalize(cub.cam.dir, 1));
+
 	raycasting(&cub);
 
 	/* DEBUGGING */
