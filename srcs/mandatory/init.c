@@ -44,11 +44,7 @@ static void	init_p(t_cubdata *cub, int i, int j, char c)
 	if (c == 'E')
 		cub->cam.dir.x = canvas->width / (2 * tan(cub->settings.fov / 2));
 	cub->cam.hor = transf_coord(-cub->cam.dir.y, cub->cam.dir.x, 0);
-	cub->cam.ver.x = -cub->cam.dir.z * cub->cam.dir.x;
-	cub->cam.ver.y = -cub->cam.dir.y * cub->cam.dir.z;
-	cub->cam.ver.z = pow(cub->cam.dir.y, 2) + pow(cub->cam.dir.x, 2);
 	cub->cam.hor = normalize(cub->cam.hor, 1);
-	cub->cam.ver = normalize(cub->cam.ver, 1);
 	cub->player.pos.x = j + 0.5;
 	cub->player.pos.y = i + 0.5;
 	cub->player.pos.z = 0.5;

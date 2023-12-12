@@ -14,25 +14,17 @@
 
 t_coord	get_vector(t_img_data *canvas, int j, int i, t_cubdata *cub)
 {
-	/* t_coord	vector_hor;
-	t_coord	vector_ver; */
 	t_coord	vector;
 	t_coord	cam;
-	/* DEBUGGING */
-	struct timespec	start;
-	struct timespec	end;
-	clock_gettime(CLOCK_REALTIME, &start);
 
 	cam.x = (j - canvas->width / 2.0);
 	cam.y = (canvas->height / 2.0 - i);
 	vector.x = cub->player.pos.x + cub->cam.dir.x + cub->cam.hor.x \
-	* cam.x + cub->cam.ver.x * cam.y;
+	* cam.x;
 	vector.y = cub->player.pos.y + cub->cam.dir.y + cub->cam.hor.y \
-	* cam.x + cub->cam.ver.y * cam.y;
+	* cam.x;
 	vector.z = cub->player.pos.z + cub->cam.dir.z + cub->cam.hor.z \
-	* cam.x + cub->cam.ver.z * cam.y;
-	clock_gettime(CLOCK_REALTIME, &end);
-	average_time("get_vector", time_diff(&start, &end));
+	* cam.x + cam.y;
 	return (vector);
 }
 
@@ -73,10 +65,6 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 	t_img_data	*img;
 	char		orientation;
 	t_coord		_case;
-	/* DEBUGGING */
-	struct timespec	start;
-	struct timespec	end;
-	clock_gettime(CLOCK_REALTIME, &start);
 
 	canvas = get_canvas(&cub->data, MAIN);
 	if (pint.z <= EPSILON)
@@ -99,8 +87,6 @@ void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
 	else
 		pimg.x = (pint.x - floor(pint.x)) * img->width;
 	my_mlx_pixel_put(canvas, pscr.x, pscr.y, ((int *)img->addr)[pimg.y * img->height + pimg.x]);
-	clock_gettime(CLOCK_REALTIME, &end);
-	average_time("raycasting_put", time_diff(&start, &end));
 }
 
 /* returns coordinates of the intersection between vector and a wall */
@@ -110,22 +96,12 @@ t_coord	intersection(t_coord point, t_coord vector, t_map *map)
 	t_coord		_case;
 	double		min;
 	static int	count = 0;
-	//DEBUGGING
-	static struct timespec	start = {0};
-	struct timespec			end;
-	if (!start.tv_sec)
-		clock_gettime(CLOCK_REALTIME, &start);
 
 	_case = get_case(vector, point, CURRENT);
 	if (count > 1000 || point.z <= EPSILON || point.z >= 1 - EPSILON || \
 		(int)_case.y >= map->height || (int)_case.x >= map->width || (int)_case.y < 0 || \
 			(int)_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
-	{
-		clock_gettime(CLOCK_REALTIME, &end);
-		average_time("intersection", time_diff(&start, &end));
-		ft_bzero(&start, sizeof(struct timespec));
 		return (ft_bzero(&count, sizeof(int)), point);
-	}
 	_case = get_case(vector, point, NEXT);
 	min = 0;
 	if (fabs(vector.x) >= EPSILON)
@@ -153,10 +129,6 @@ void	raycasting(t_cubdata *cub)
 	int			i;
 	int			j;
 	t_coord		vector;
-	/* DEBUGGING */
-	struct timespec	start;
-	struct timespec	end;
-	clock_gettime(CLOCK_REALTIME, &start);
 
 	i = 0;
 	data = &cub->data;
@@ -174,6 +146,45 @@ void	raycasting(t_cubdata *cub)
 		i++;
 	}
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
-	clock_gettime(CLOCK_REALTIME, &end);
-	average_time("raycasting", time_diff(&start, &end));
+}
+
+void	new_raycasting(t_cubdata *cub)
+{
+	t_data		*data;
+	t_img_data	*canvas;
+	int			i;
+	int			j;
+	t_coord		vector;
+	t_coord		vector_i;
+	t_coord		point;
+	t_coord		point_i;
+	double		d;
+	double		angle;
+
+	j = 0;
+	data = &cub->data;
+	canvas = get_canvas(data, MAIN);
+	while (j < canvas->width)
+	{
+		vector = get_vector(canvas, j, canvas->height / 2, cub);
+		vector.z = 0;
+		point = intersection(cub->player.pos, vector, &cub->map);
+		d = sqrt(pow(point.x - cub->player.pos.x, 2) + pow(point.y - cub->player.pos.y, 2));
+		vector = normalize(vector, d);
+		i = 0;
+		while (i < canvas->height)
+		{
+			vector_i = normalize(get_vector(canvas, j, i, cub), 1);
+			point_i = point;
+			angle = acos((vector_i.x * vector.x + vector_i.y * vector.y + vector_i.z * vector.z) / d);
+			if (vector_i.z > 0)
+				point_i.z += tan(angle) * d;
+			else
+				point_i.z -= tan(angle) * d;
+			raycasting_put(point_i, cub, transf_point(j, i), vector);
+			i++;
+		}
+		j++;
+	}
+	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
 }

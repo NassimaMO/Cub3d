@@ -27,39 +27,7 @@ int	main(int argc, char *argv[])
 	data = (init_data(&cub.data), fill_data(argv[1], &cub), &cub.data);
 	if (parse_map_walls(&cub.map))
 		return (free_cubdata(&cub), print_errors(ERR_PARSING));
-
-	for (int i = 0 ; i < 5 ; i++)
-		input_move(XK_w, &cub.player, &cub.map, normalize(cub.cam.dir, 1));
-
-	raycasting(&cub);
-
-	/* DEBUGGING */
-	/* for (int i = 0 ; i < 2 ; i++)
-		input(XK_Up, &cub);
-	for (int i = 0 ; i < 4 ; i++)
-		input(XK_Down, &cub);
-	for (int i = 0 ; i < 2 ; i++)
-		input(XK_Up, &cub);
-	for (int i = 0 ; i < 2 ; i++)
-		input(XK_Left, &cub);
-	for (int i = 0 ; i < 4 ; i++)
-		input(XK_Right, &cub);
-	for (int i = 0 ; i < 2 ; i++)
-		input(XK_Left, &cub);
-	for (int i = 0 ; i < 2 ; i++)
-		input(XK_a, &cub);
-	for (int i = 0 ; i < 4 ; i++)
-		input(XK_d, &cub);
-	for (int i = 0 ; i < 2 ; i++)
-		input(XK_a, &cub);
-	for (int i = 0 ; i < 2 ; i++)
-		input(XK_w, &cub);
-	for (int i = 0 ; i < 4 ; i++)
-		input(XK_s, &cub);
-	for (int i = 0 ; i < 2 ; i++)
-		input(XK_w, &cub);
-	input(XK_Escape, &cub); */
-	
+	new_raycasting(&cub);
 	mlx_loop_hook(data->mlx_ptr, &no_input, data);
 	mlx_hook(data->win.ptr, KeyPress, KeyPressMask, &input, &cub);
 	mlx_hook(data->win.ptr, DestroyNotify, StructureNotifyMask, &ft_exit, data);

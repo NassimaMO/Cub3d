@@ -49,16 +49,16 @@ t_coord	transf_coord(double x, double y, double z)
 
 t_coord	normalize(t_coord vector, double new_norm)
 {
-	double norm;
+	double	norm;
 
 	norm = sqrt(pow(vector.x, 2) + pow(vector.y, 2) + pow(vector.z, 2));
 	return (transf_coord(vector.x * new_norm / norm, \
-							 vector.y * new_norm / norm, \
-							 vector.z * new_norm / norm));
+							vector.y * new_norm / norm, \
+							vector.z * new_norm / norm));
 }
 
 /* DEBUGGING */
-void	print_coord(t_coord *coord)
+/* void	print_coord(t_coord *coord)
 {
 	printf("(%.3f, %.3f, %.3f)", coord->x, coord->y, coord->z);
 }
@@ -98,8 +98,8 @@ void	print_averages(void)
 {
 	double	x;
 
-	x = average_time("raycasting", -1);
-	printf("average raycasting time : %dns(%.3fs)\n", (int)x, x * 1e-9);
+	x = average_time("new_raycasting", -1);
+	printf("average new raycasting time : %dns(%.3fs)\n", (int)x, x * 1e-9);
 	x = average_time("intersection", -1);
 	printf("average intersection time : %dns(%.3fs)\n", (int)x, x * 1e-9);
 	x = average_time("raycasting_put", -1);
@@ -110,4 +110,4 @@ void	print_averages(void)
 	printf("average input_move time : %dns(%.3fs)\n", (int)x, x * 1e-9);
 	x = average_time("input_cam", -1);
 	printf("average input_cam time : %dns(%.3fs)\n\n", (int)x, x * 1e-9);
-}
+} */

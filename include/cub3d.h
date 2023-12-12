@@ -62,7 +62,6 @@ typedef struct s_settings {
 typedef struct s_cam {
 	t_coord	dir;
 	t_coord	hor;
-	t_coord	ver;
 }	t_cam;
 
 typedef struct s_player {
@@ -117,5 +116,6 @@ void	print_averages(void);
 /* raycasting.c */
 t_coord	get_case(t_coord vector, t_coord point, int p);
 void	raycasting(t_cubdata *cub);
+void	new_raycasting(t_cubdata *cub);
 
 #endif
