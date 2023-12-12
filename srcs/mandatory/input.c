@@ -22,13 +22,13 @@ int	check_collide(t_map *map, t_player *player, t_coord point, \
 
 	tmp = transf_coord(point.x - 0.01, point.y - 0.01, point.z - 0.01);
 	_case = get_case(direction, tmp, CURRENT);
-	if ((int)_case.y >= map->height || (int)_case.x >= map->width || (int)_case.y < 0 || \
-			(int)_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
+	if (_case.y >= map->height || _case.x >= map->width || _case.y < 0 || \
+	_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
 		return (1);
 	tmp = transf_coord(point.x + 0.01, point.y + 0.01, point.z + 0.01);
 	_case = get_case(direction, tmp, CURRENT);
-	if ((int)_case.y >= map->height || (int)_case.x >= map->width || (int)_case.y < 0 || \
-			(int)_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
+	if (_case.y >= map->height || _case.x >= map->width || _case.y < 0 || \
+	_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
 		return (1);
 	player->pos = point;
 	return (0);
@@ -59,30 +59,25 @@ int	input_move(int key, t_player *player, t_map *map, t_coord direction)
 /* moving camera with arrows input handling (using spherical coordinates)*/
 int	input_cam(int key, t_coord *dir, t_cubdata *cub, t_img_data *canvas)
 {
-	double			norm;
-	double			angle_hor;
-	double			angle_ver;
+	double	norm;
+	double	angle_h;
+	double	angle_v;
 
-	if (key == XK_Up)
-		angle_ver = SENS * cub->settings.sens;
-	else if (key == XK_Down)
-		angle_ver = -SENS * cub->settings.sens;
-	else if (key == XK_Right)
-		angle_hor = SENS * cub->settings.sens;
-	else if (key == XK_Left)
-		angle_hor = -SENS * cub->settings.sens;
+	norm = sqrt(pow(dir->x, 2) + pow(dir->y, 2) + pow(dir->z, 2));
+	angle_h = atan2(dir->y, dir->x);
+	angle_v = asin(dir->z / norm);
+	if (key == XK_Up && angle_v + SENS * cub->settings.sens < M_PI / 2)
+		angle_v += SENS * cub->settings.sens;
+	else if (key == XK_Down && angle_v - SENS * cub->settings.sens > -M_PI / 2)
+		angle_v -= SENS * cub->settings.sens;
+	else if (key == XK_Right && angle_v + SENS * cub->settings.sens < M_PI / 2)
+		angle_h += SENS * cub->settings.sens;
+	else if (key == XK_Left && angle_v - SENS * cub->settings.sens > -M_PI / 2)
+		angle_h -= SENS * cub->settings.sens;
 	else
 		return (0);
-	norm = sqrt(pow(dir->x, 2) + pow(dir->y, 2) + pow(dir->z, 2));
-	angle_hor += atan2(dir->y, dir->x);
-	angle_ver += asin(dir->z / norm);
-	if (angle_ver > M_PI / 2.0)
-		angle_ver = M_PI / 2.0;
-	if (angle_ver < -M_PI / 2.0)
-		angle_ver = -M_PI / 2.0;
-	dir->x = norm * cos(angle_ver) * cos(angle_hor);
-	dir->y = norm * cos(angle_ver) * sin(angle_hor);
-	dir->z = norm * sin(angle_ver);
+	*dir = transf_coord(norm * cos(angle_v) * cos(angle_h), \
+			norm * cos(angle_v) * sin(angle_h), norm * sin(angle_v));
 	*dir = normalize(*dir, canvas->width / (2 * tan(cub->settings.fov / 2)));
 	cub->cam.hor = transf_coord(-cub->cam.dir.y, cub->cam.dir.x, 0);
 	cub->cam.hor = normalize(cub->cam.hor, 1);

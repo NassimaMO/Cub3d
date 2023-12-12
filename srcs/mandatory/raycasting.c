@@ -58,35 +58,34 @@ t_coord	get_case(t_coord vector, t_coord point, int p)
 
 /* calculate wall orientation and put the right pixel color 
 according to intersection point*/
-void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, t_coord vector)
+void	raycasting_put(t_coord pint, t_cubdata *cub, t_point pscr, \
+															t_coord vector)
 {
-	t_img_data	*canvas;
+	t_img_data	*scr;
 	t_point		pimg;
 	t_img_data	*img;
 	char		orientation;
 	t_coord		_case;
 
-	canvas = get_canvas(&cub->data, MAIN);
+	scr = get_canvas(&cub->data, MAIN);
 	if (pint.z <= EPSILON)
-		return (my_mlx_pixel_put(canvas, pscr.x, pscr.y, cub->f_color));
+		return (pix(scr, pscr.x, pscr.y, cub->f_color));
 	if (pint.z >= 1 - EPSILON)
-		return (my_mlx_pixel_put(canvas, pscr.x, pscr.y, cub->c_color));
+		return (pix(scr, pscr.x, pscr.y, cub->c_color));
 	_case = get_case(vector, pint, CURRENT);
+	orientation = 'W';
 	if (fabs(pint.y - _case.y) < EPSILON)
 		orientation = 'S';
 	else if (fabs(pint.y - _case.y - 1) < EPSILON)
 		orientation = 'N';
 	else if (fabs(pint.x - _case.x) < EPSILON)
 		orientation = 'E';
-	else
-		orientation = 'W';
 	img = new_image(&cub->data, orientation, NULL, NULL);
 	pimg.y = (pint.z - floor(pint.z)) * img->height;
+	pimg.x = (pint.x - floor(pint.x)) * img->width;
 	if (pint.x - floor(pint.x) < EPSILON)
 		pimg.x = (pint.y - floor(pint.y)) * img->width;
-	else
-		pimg.x = (pint.x - floor(pint.x)) * img->width;
-	my_mlx_pixel_put(canvas, pscr.x, pscr.y, ((int *)img->addr)[pimg.y * img->height + pimg.x]);
+	pix(scr, pscr.x, pscr.y, ((int *)img->addr)[pimg.y * img->height + pimg.x]);
 }
 
 /* returns coordinates of the intersection between vector and a wall */
@@ -99,11 +98,10 @@ t_coord	intersection(t_coord point, t_coord vector, t_map *map)
 
 	_case = get_case(vector, point, CURRENT);
 	if (count > 1000 || point.z <= EPSILON || point.z >= 1 - EPSILON || \
-		(int)_case.y >= map->height || (int)_case.x >= map->width || (int)_case.y < 0 || \
-			(int)_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
+		_case.y >= map->height || _case.x >= map->width || _case.y < 0 || \
+			_case.x < 0 || map->tab[(int)_case.y][(int)_case.x] == WALL)
 		return (ft_bzero(&count, sizeof(int)), point);
-	_case = get_case(vector, point, NEXT);
-	min = 0;
+	_case = (ft_bzero(&min, sizeof(int)), get_case(vector, point, NEXT));
 	if (fabs(vector.x) >= EPSILON)
 		min = fabs((_case.x - point.x) / vector.x);
 	else if (fabs(vector.y) >= EPSILON)
@@ -122,7 +120,7 @@ t_coord	intersection(t_coord point, t_coord vector, t_map *map)
 }
 
 /* go through every pixel of the screen and apply raycasting method */
-void	raycasting(t_cubdata *cub)
+/* void	raycasting(t_cubdata *cub)
 {
 	t_data		*data;
 	t_img_data	*canvas;
@@ -146,45 +144,41 @@ void	raycasting(t_cubdata *cub)
 		i++;
 	}
 	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
-}
+} */
 
 void	new_raycasting(t_cubdata *cub)
 {
-	t_data		*data;
 	t_img_data	*canvas;
 	int			i;
 	int			j;
-	t_coord		vector;
-	t_coord		vector_i;
-	t_coord		point;
-	t_coord		point_i;
+	t_coord		v;
+	t_coord		u;
+	t_coord		p;
+	t_coord		pi;
 	double		d;
-	double		angle;
 
 	j = 0;
-	data = &cub->data;
-	canvas = get_canvas(data, MAIN);
+	canvas = get_canvas(&cub->data, MAIN);
 	while (j < canvas->width)
 	{
-		vector = get_vector(canvas, j, canvas->height / 2, cub);
-		vector.z = 0;
-		point = intersection(cub->player.pos, vector, &cub->map);
-		d = sqrt(pow(point.x - cub->player.pos.x, 2) + pow(point.y - cub->player.pos.y, 2));
-		vector = normalize(vector, d);
+		v = get_vector(canvas, j, canvas->height / 2, cub);
+		v.z = 0;
+		p = intersection(cub->player.pos, v, &cub->map);
+		d = sqrt(pow(p.x - cub->player.pos.x, 2) + pow(p.y - cub->player.pos.y, 2));
+		v = normalize(v, d);
 		i = 0;
 		while (i < canvas->height)
 		{
-			vector_i = normalize(get_vector(canvas, j, i, cub), 1);
-			point_i = point;
-			angle = acos((vector_i.x * vector.x + vector_i.y * vector.y + vector_i.z * vector.z) / d);
-			if (vector_i.z > 0)
-				point_i.z += tan(angle) * d;
+			u = normalize(get_vector(canvas, j, i, cub), 1);
+			pi = p;
+			if (u.z > 0)
+				pi.z += tan(acos((u.x * v.x + u.y * v.y + u.z * v.z) / d)) * d;
 			else
-				point_i.z -= tan(angle) * d;
-			raycasting_put(point_i, cub, transf_point(j, i), vector);
+				pi.z -= tan(acos((u.x * v.x + u.y * v.y + u.z * v.z) / d)) * d;
+			raycasting_put(pi, cub, transf_point(j, i), u);
 			i++;
 		}
 		j++;
 	}
-	mlx_put_image_to_window(data->mlx_ptr, data->win.ptr, canvas->ptr, 0, 0);
+	mlx_put_image_to_window(cub->data.mlx_ptr, cub->data.win.ptr, canvas->ptr, 0, 0);
 }

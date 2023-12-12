@@ -12,7 +12,7 @@
 
 #include "mlx_utils.h"
 
-void	my_mlx_pixel_put(t_img_data *img, int x, int y, int color)
+void	pix(t_img_data *img, int x, int y, int color)
 {
 	char	*dst;
 
@@ -31,7 +31,7 @@ void	background_pix(t_img_data *canvas, int color)
 		j = 0;
 		while (j < canvas->height)
 		{
-			my_mlx_pixel_put(canvas, i, j, color);
+			pix(canvas, i, j, color);
 			j++;
 		}
 		i++;
@@ -56,7 +56,7 @@ void	background_gradient(t_img_data *canvas, int start, int end, int p)
 				color = add_color(start, end, 100 * (float)j / canvas->width);
 			if (p == VER)
 				color = add_color(start, end, 100 * (float)i / canvas->height);
-			my_mlx_pixel_put(canvas, j, i, color);
+			pix(canvas, j, i, color);
 			j++;
 		}
 		i++;

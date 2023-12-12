@@ -105,7 +105,7 @@ typedef struct s_font {
 int			mlx_flush_event(t_xvar *xvar);
 
 /* pixel.c */
-void		my_mlx_pixel_put(t_img_data *img, int x, int y, int color);
+void		pix(t_img_data *img, int x, int y, int color);
 void		background_pix(t_img_data *canvas, int color);
 void		background_gradient(t_img_data *canvas, int start, int end, \
 															int parameter);
