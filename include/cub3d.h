@@ -30,7 +30,7 @@
 # define ERROR -1
 # define ERR_MEMORY -2
 # define ERR_ARGS -3
-# define ERR_PARSING 0
+# define ERR_PARSING 1
 
 # define MAIN 1
 # define FOV 90
@@ -62,6 +62,7 @@ typedef struct s_settings {
 typedef struct s_cam {
 	t_coord	dir;
 	t_coord	hor;
+	t_coord	ver;
 }	t_cam;
 
 typedef struct s_player {
@@ -85,7 +86,7 @@ int		print_errors(int n);
 void	print_map(t_map *map);
 
 /* init.c */
-void	init_data(t_data *data);
+int		init_data(t_data *data);
 int		fill_data(char *path, t_cubdata *cub);
 
 /* input.c */
@@ -107,15 +108,16 @@ char	*firstnotsp(char *str);
 int		nospacelen(char *str);
 t_coord	transf_coord(double x, double y, double z);
 t_coord	normalize(t_coord vector, double new_norm);
+char	get_orientation(t_coord pint, t_coord vector);
 // DEBBUG
-void	print_coord(t_coord *coord);
+/* void	print_coord(t_coord *coord);
 double	time_diff(struct timespec *start, struct timespec *end);
 double	average_time(const char *fname, double time);
-void	print_averages(void);
+void	print_averages(void); */
 
 /* raycasting.c */
 t_coord	get_case(t_coord vector, t_coord point, int p);
 void	raycasting(t_cubdata *cub);
-void	new_raycasting(t_cubdata *cub);
+/* void	new_raycasting(t_cubdata *cub); */
 
 #endif

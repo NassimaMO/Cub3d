@@ -41,7 +41,7 @@ static int	parse_textures(char *line)
 		line++;
 	if (*line && ((i < 4 && open(line + 1, O_RDONLY) < 0) || i == 6))
 		return (ERR_PARSING);
-	return (bool_end == 6);
+	return (bool_end != 6);
 }
 
 /* checks map line ; returns error if an unknown char is found, 0 if not */
@@ -71,6 +71,7 @@ int	parse_info(char *path, t_cubdata *cub)
 	if (fd < 0)
 		return (ERR_PARSING);
 	line = gnl_wraper(fd);
+	parse = 1;
 	while (line)
 	{
 		parse = f(line);
@@ -80,11 +81,11 @@ int	parse_info(char *path, t_cubdata *cub)
 			cub->map.width = nospacelen(line);
 		if (f == parse_map_char && firstnotsp(line))
 			cub->map.height++;
-		if (f == parse_textures && parse == 1)
+		if (f == parse_textures && parse == 0)
 			f = parse_map_char;
 		line = (free(line), gnl_wraper(fd));
 	}
-	return (close(fd));
+	return (close(fd), parse);
 }
 
 int	parse_map_walls(t_map *map)

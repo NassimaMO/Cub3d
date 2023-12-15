@@ -59,9 +59,9 @@ int	input_move(int key, t_player *player, t_map *map, t_coord direction)
 /* moving camera with arrows input handling (using spherical coordinates)*/
 int	input_cam(int key, t_coord *dir, t_cubdata *cub, t_img_data *canvas)
 {
-	double	norm;
-	double	angle_h;
-	double	angle_v;
+	double			norm;
+	double			angle_h;
+	double			angle_v;
 
 	norm = sqrt(pow(dir->x, 2) + pow(dir->y, 2) + pow(dir->z, 2));
 	angle_h = atan2(dir->y, dir->x);
@@ -76,11 +76,13 @@ int	input_cam(int key, t_coord *dir, t_cubdata *cub, t_img_data *canvas)
 		angle_h -= SENS * cub->settings.sens;
 	else
 		return (0);
-	*dir = transf_coord(norm * cos(angle_v) * cos(angle_h), \
-			norm * cos(angle_v) * sin(angle_h), norm * sin(angle_v));
+	dir->x = norm * cos(angle_v) * cos(angle_h);
+	dir->y = norm * cos(angle_v) * sin(angle_h);
+	dir->z = norm * sin(angle_v);
 	*dir = normalize(*dir, canvas->width / (2 * tan(cub->settings.fov / 2)));
-	cub->cam.hor = transf_coord(-cub->cam.dir.y, cub->cam.dir.x, 0);
-	cub->cam.hor = normalize(cub->cam.hor, 1);
+	cub->cam.hor = normalize(transf_coord(-dir->y, dir->x, 0), 1);
+	cub->cam.ver = normalize(transf_coord(-dir->z * dir->x, -dir->y * dir->z, \
+										pow(dir->y, 2) + pow(dir->x, 2)), 1);
 	return (1);
 }
 
@@ -91,6 +93,6 @@ int	input(int key, t_cubdata *cub)
 		return (1);
 	if (input_move(key, &cub->player, &cub->map, normalize(cub->cam.dir, 1)) || \
 		input_cam(key, &cub->cam.dir, cub, get_canvas(&cub->data, MAIN)))
-		return (new_raycasting(cub), mlx_flush_event(cub->data.mlx_ptr), 1);
+		return (raycasting(cub), mlx_flush_event(cub->data.mlx_ptr), 1);
 	return (0);
 }

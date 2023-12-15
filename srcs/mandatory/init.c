@@ -13,20 +13,22 @@
 #include "cub3d.h"
 
 /* initializes all mlx related data */
-void	init_data(t_data *data)
+int	init_data(t_data *data)
 {
 	ft_bzero(data, sizeof(t_data));
 	data->mlx_ptr = mlx_init();
 	if (!data->mlx_ptr)
-		return (print_errors(ERR_MEMORY), free_data(data), exit(ERROR));
-	mlx_get_screen_size(data->mlx_ptr, &(data->win.width), \
-	&(data->win.height));
+		return (free_data(data), ERR_MEMORY);
+	if (mlx_get_screen_size(data->mlx_ptr, &(data->win.width), \
+	&(data->win.height)))
+		return (free_data(data), ERR_MEMORY);
 	data->win.ptr = \
 	mlx_new_window(data->mlx_ptr, data->win.width, data->win.height, WIN_NAME);
 	if (data->win.ptr)
 		alloc_canvas(data, data->win.width, data->win.height, MAIN);
 	else
-		return (free_data(data), exit(print_errors(ERR_MEMORY)));
+		return (free_data(data), ERR_MEMORY);
+	return (0);
 }
 
 /* initializes player ; give pos and character of player in the file */
@@ -35,6 +37,8 @@ static void	init_p(t_cubdata *cub, int i, int j, char c)
 	t_img_data	*canvas;
 
 	canvas = get_canvas(&cub->data, MAIN);
+	if (!canvas)
+		return ((void)ft_exit(&cub->data));
 	if (c == 'N')
 		cub->cam.dir.y = -canvas->width / (2 * tan(cub->settings.fov / 2));
 	if (c == 'S')
@@ -45,6 +49,10 @@ static void	init_p(t_cubdata *cub, int i, int j, char c)
 		cub->cam.dir.x = canvas->width / (2 * tan(cub->settings.fov / 2));
 	cub->cam.hor = transf_coord(-cub->cam.dir.y, cub->cam.dir.x, 0);
 	cub->cam.hor = normalize(cub->cam.hor, 1);
+	cub->cam.ver.x = -cub->cam.dir.z * cub->cam.dir.x;
+	cub->cam.ver.y = -cub->cam.dir.y * cub->cam.dir.z;
+	cub->cam.ver.z = pow(cub->cam.dir.y, 2) + pow(cub->cam.dir.x, 2);
+	cub->cam.ver = normalize(cub->cam.ver, 1);
 	cub->player.pos.x = j + 0.5;
 	cub->player.pos.y = i + 0.5;
 	cub->player.pos.z = 0.5;
@@ -58,7 +66,7 @@ static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 	int		j;
 	char	*s;
 
-	if (!first_line || alloc_map(&cub->map))
+	if (!first_line || (alloc_map(&cub->map) && (free(first_line), 1)))
 		return (ERR_PARSING);
 	i = 0;
 	s = first_line;

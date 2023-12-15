@@ -31,7 +31,7 @@ int	nospacelen(char *str)
 
 	if (!firstnotsp(str))
 		return (0);
-	len = ft_strlen(str) - 1; 
+	len = ft_strlen(str) - 1;
 	while (len >= 0 && ft_isspace(str[len]))
 		len--;
 	return (len + 1);
@@ -57,8 +57,51 @@ t_coord	normalize(t_coord vector, double new_norm)
 							vector.z * new_norm / norm));
 }
 
+char	get_orientation(t_coord pint, t_coord vector)
+{
+	t_coord	_case;
+	char	c;
+
+	_case = get_case(vector, pint, CURRENT);
+	c = 'W';
+	if (fabs(pint.y - _case.y) < EPSILON)
+		c = 'S';
+	else if (fabs(pint.y - _case.y - 1) < EPSILON)
+		c = 'N';
+	else if (fabs(pint.x - _case.x) < EPSILON)
+		c = 'E';
+	return (c);
+}
+
 /* DEBUGGING */
-/* void	print_coord(t_coord *coord)
+/*
+void	print_map(t_map *map)
+{
+	int	i;
+	int	j;
+
+	ft_printf("\n");
+	i = 0;
+	while (i < map->height)
+	{
+		j = 0;
+		while (j < map->width)
+		{
+			if (map->tab[i][j] == -1)
+				ft_printf("X");
+			else if (ft_isalpha(map->tab[i][j]))
+				ft_printf("%c", map->tab[i][j]);
+			else
+				ft_printf("%d", map->tab[i][j]);
+			j++;
+		}
+		ft_printf("\n");
+		i++;
+	}
+	ft_printf("\n");
+}
+
+void	print_coord(t_coord *coord)
 {
 	printf("(%.3f, %.3f, %.3f)", coord->x, coord->y, coord->z);
 }
