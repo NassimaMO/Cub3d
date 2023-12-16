@@ -17,31 +17,31 @@
 	ERR_PARSING should be negative									*/
 static int	parse_textures(char *line)
 {
-	static char			*id[] = {"NO", "SO", "WE", "EA", "F", "C"};
-	static int			tab[6] = {0};
+	const char			*id[] = {"NO", "SO", "WE", "EA", "F", "C"};
+	const int			tab[6] = {0};
 	int					i;
 	static int			bool_end = 0;
 
-	while (ft_isspace(*line))
+	while (line && ft_isspace(*line))
 		line++;
 	i = 0;
-	while (i < 6)
+	while (line && i < 6)
 	{
 		if (*line && !ft_strncmp(line, id[i], ft_strlen(id[i])) && \
 				ft_isspace(*(line + ft_strlen(id[i]))))
 		{
 			if (tab[i])
-				return (ERR_PARSING);
+				return (free(line), ERR_PARSING);
 			tab[i] = (bool_end++, 1);
 			break ;
 		}
 		i++;
 	}
-	while (*line && (!ft_isspace(*line) || ft_isspace(*(line + 1))))
+	while (line && *line && (!ft_isspace(*line) || ft_isspace(*(line + 1))))
 		line++;
-	if (*line && ((i < 4 && open(line + 1, O_RDONLY) < 0) || i == 6))
-		return (ERR_PARSING);
-	return (bool_end != 6);
+	if (line && *line && ((i < 4 && open(line + 1, O_RDONLY) < 0) || i == 6))
+		return (free(line), ERR_PARSING);
+	return (free(line), bool_end != 6);
 }
 
 /* checks map line ; returns error if an unknown char is found, 0 if not */
@@ -50,12 +50,14 @@ static int	parse_map_char(char *line)
 	int	i;
 
 	i = 0;
+	if (!line)
+		return (ERR_MEMORY);
 	while (line[i] == ' ' || line[i] == '0' || line[i] == '1' || line[i] == 'N'\
 			|| line[i] == 'S' || line[i] == 'E' || line[i] == 'W')
 		i++;
 	if (line[i])
-		return (ERR_PARSING);
-	return (0);
+		return (free(line), ERR_PARSING);
+	return (free(line), 0);
 }
 
 /* parses file and calls check lines functions */
@@ -74,7 +76,7 @@ int	parse_info(char *path, t_cubdata *cub)
 	parse = 1;
 	while (line)
 	{
-		parse = f(line);
+		parse = f(ft_strtrim(line, " \t\v\f"));
 		if (parse < 0)
 			return (free(line), close(fd), ERR_PARSING);
 		if (f == parse_map_char && cub->map.width < nospacelen(line))

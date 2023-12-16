@@ -30,7 +30,7 @@
 # define ERROR -1
 # define ERR_MEMORY -2
 # define ERR_ARGS -3
-# define ERR_PARSING 1
+# define ERR_PARSING -4
 
 # define MAIN 1
 # define FOV 90
