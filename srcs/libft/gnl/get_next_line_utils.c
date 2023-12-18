@@ -24,12 +24,25 @@ int	gnl_strlen(char *str)
 	return (i);
 }
 
+char	*gnl_trim(int fd, const char *set)
+{
+	char	*str;
+	char	*tmp;
+
+	str = get_next_line(fd);
+	if (!str)
+		return (NULL);
+	tmp = ft_strtrim(str, set);
+	free(str);
+	return (tmp);
+}
+
 char	*gnl_wraper(int fd)
 {
 	char	*str;
 
 	str = get_next_line(fd);
 	if (ft_strchr(str, '\n'))
-		*ft_strchr(str, '\n') = 0;
+		*ft_strchr(str, '\n') = '\0';
 	return (str);
 }

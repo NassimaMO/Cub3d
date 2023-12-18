@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nghulam- <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/18 15:06:57 by nghulam-          #+#    #+#             */
+/*   Updated: 2023/12/18 15:07:00 by nghulam-         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -5,7 +17,7 @@
 #include "libft.h"
 
 /* (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH) */
-# define S_FLAG 420
+#define S_FLAG 420
 
 void	random_fill(int fd, int player)
 {

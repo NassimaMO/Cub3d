@@ -14,7 +14,7 @@
 
 /*	returns pointer to string pos where first non-space character is found ;
 	returns NULL if str is NULL or empty or contains only spaces */
-char	*firstnotsp(char *str)
+char	*strnotsp(char *str)
 {
 	while (str && *str)
 	{
@@ -29,7 +29,7 @@ int	nospacelen(char *str)
 {
 	int		len;
 
-	if (!firstnotsp(str))
+	if (!strnotsp(str))
 		return (0);
 	len = ft_strlen(str) - 1;
 	while (len >= 0 && ft_isspace(str[len]))
@@ -74,8 +74,7 @@ char	get_orientation(t_coord pint, t_coord vector)
 }
 
 /* DEBUGGING */
-/*
-void	print_map(t_map *map)
+/* void	print_map(t_map *map)
 {
 	int	i;
 	int	j;

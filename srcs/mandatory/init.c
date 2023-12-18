@@ -86,49 +86,60 @@ static int	fill_map(t_cubdata *cub, char *first_line, int fd)
 			cub->map.tab[i][j++] = -1;
 		s = (i++, free(s), gnl_wraper(fd));
 	}
-	return (close(fd));
+	return (close(fd), 0);
 }
 
 /*	give string starting at color info on file to have corresponding int 
 	represented pixel ; string format should be "x r,g,b" 					*/
-static int	pixel(char *str)
+static int	pixel(char *str, t_cubdata *cub)
 {
-	int	r;
-	int	g;
-	int	b;
+	int		r;
+	int		g;
+	int		b;
+	char	*tmp;
 
-	r = ft_atoi(firstnotsp(ft_strchr(str, ' ')));
-	g = ft_atoi(ft_strchr(str, ',') + 1);
-	b = ft_atoi(ft_strrchr(str, ',') + 1);
+	tmp = strnotsp(ft_strchr(str, ' '));
+	if (!tmp || !*tmp)
+		exit((free_cubdata(cub), free(str), print_errors(ERR_PARSING)));
+	r = ft_atoi(tmp);
+	tmp = ft_strchr(str, ',');
+	if (!tmp || !tmp[1])
+		exit((free_cubdata(cub), free(str), print_errors(ERR_PARSING)));
+	g = ft_atoi(tmp + 1);
+	tmp = ft_strchr(tmp + 1, ',');
+	if (!tmp || !tmp[1])
+		exit((free_cubdata(cub), free(str), print_errors(ERR_PARSING)));
+	b = ft_atoi(tmp + 1);
+	if (r < 0 || g < 0 || b < 0 || r > 255 || g > 255 || b > 255)
+		exit((free_cubdata(cub), free(str), print_errors(ERR_PARSING)));
 	return ((r << (8 * 2)) + (g << 8) + b);
 }
 
 /* fills textures, colours and map with file data */
-int	fill_data(char *path, t_cubdata *cub)
+int	fill_data(int fd, t_cubdata *cub)
 {
-	int		fd;
-	int		i;
-	char	*line;
+	int			i;
+	char		*line;
+	t_img_data	*p;
 
-	fd = open(path, O_RDONLY);
-	line = (ft_bzero(&i, sizeof(int)), gnl_wraper(fd));
+	line = (ft_bzero(&i, sizeof(int)), gnl_trim(fd, " \t\v\f\n\r"));
 	while (line && i < 6)
 	{
-		if (!ft_strncmp("NO", line, 2) && ++i)
-			new_image(&cub->data, 'N', NULL, firstnotsp(ft_strchr(line, ' ')));
-		else if (!ft_strncmp("SO", line, 2) && ++i)
-			new_image(&cub->data, 'S', NULL, firstnotsp(ft_strchr(line, ' ')));
-		else if (!ft_strncmp("WE", line, 2) && ++i)
-			new_image(&cub->data, 'W', NULL, firstnotsp(ft_strchr(line, ' ')));
-		else if (!ft_strncmp("EA", line, 2) && ++i)
-			new_image(&cub->data, 'E', NULL, firstnotsp(ft_strchr(line, ' ')));
+		if ((!ft_strncmp("NO", line, 2) || !ft_strncmp("SO", line, 2) || \
+			!ft_strncmp("WE", line, 2) || !ft_strncmp("EA", line, 2)) && ++i)
+		{
+			p = new_image(&cub->data, *line, 0, strnotsp(ft_strchr(line, 32)));
+			if (!p)
+				return (free(line), ERR_PARSING);
+		}
 		else if (!ft_strncmp("F", line, 1) && ++i)
-			cub->f_color = pixel(line);
+			cub->f_color = pixel(line, cub);
 		else if (!ft_strncmp("C", line, 1) && ++i)
-			cub->c_color = pixel(line);
-		line = (free(line), gnl_wraper(fd));
+			cub->c_color = pixel(line, cub);
+		while ((i == 6 && line) || (i > 6 && line && !strnotsp(line)))
+			line = (free(line), i++, gnl_wraper(fd));
+		if (i < 6)
+			line = (free(line), gnl_trim(fd, " \t\v\f\n\r"));
 	}
-	while (line && !firstnotsp(line))
-		line = (free(line), gnl_wraper(fd));
 	return (fill_map(cub, line, fd));
 }

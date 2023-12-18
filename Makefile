@@ -18,6 +18,8 @@ LIBMLX_UTILS_DIR		=	$(SRCS_DIR)/mlx_utils
 
 LIBMLX_UTILS			=	$(LIBMLX_UTILS_DIR)/libmlx_utils.a
 
+GENERATOR_DIR			=	./map_generator
+
 
 INC						=	cub3d.h
 
@@ -30,7 +32,7 @@ INC_FLAG				=	$(addprefix -I,$(INC_DIR) $(LIBMLX_DIR) $(LIBFT_DIR)/include $(LIB
 LINK_FLAG				=	-L$(LIBMLX_UTILS_DIR) -lmlx_utils -L$(LIBFT_DIR) -lft -L$(LIBMLX_DIR) -lmlx -lXext -L. -lX11 -lXrender -lm
 
 
-COMMON_FILES			=	init.c input.c memory.c parsing.c utils.c raycasting.c
+COMMON_FILES			=	error.c init.c input.c memory.c parsing.c utils.c raycasting.c
 
 MANDATORY_FILES			=	$(COMMON_FILES) main.c
 
@@ -91,12 +93,12 @@ $(LIBMLX)				:
 
 
 norm					:
-							@norminette $(INC_DIR)/$(INC)
-							@norminette $(INC_DIR)/$(INC_BONUS)
+							@norminette $(INC_DIR)
 							@make norm -C $(LIBFT_DIR)
 							@make norm -C $(LIBMLX_UTILS_DIR)
 							@norminette $(MANDATORY_SRCS)
 							@norminette $(BONUS_SRCS)
+							@norminette $(GENERATOR_DIR)
 
 clean					:
 							echo "cleaning object files..."
@@ -105,6 +107,7 @@ clean					:
 							@make clean -C $(LIBFT_DIR)
 							@make clean -C $(LIBMLX_DIR)
 							@make clean -C $(LIBMLX_UTILS_DIR)
+							@make clean -C $(GENERATOR_DIR)
 
 fclean					:		clean
 							echo "cleaning executables..."

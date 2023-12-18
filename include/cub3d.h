@@ -83,11 +83,11 @@ typedef struct s_cubdata {
 
 /* error.c */
 int		print_errors(int n);
-void	print_map(t_map *map);
+int		check_ext(char *path);
 
 /* init.c */
 int		init_data(t_data *data);
-int		fill_data(char *path, t_cubdata *cub);
+int		fill_data(int fd, t_cubdata *cub);
 
 /* input.c */
 int		input(int key, t_cubdata *cub);
@@ -104,20 +104,21 @@ int		parse_map_walls(t_map *map);
 int		backtracking(t_map *map, int i, int j);
 
 /* utils.c */
-char	*firstnotsp(char *str);
+char	*strnotsp(char *str);
 int		nospacelen(char *str);
 t_coord	transf_coord(double x, double y, double z);
 t_coord	normalize(t_coord vector, double new_norm);
 char	get_orientation(t_coord pint, t_coord vector);
 // DEBBUG
-/* void	print_coord(t_coord *coord);
+void	print_map(t_map *map);
+void	print_coord(t_coord *coord);
 double	time_diff(struct timespec *start, struct timespec *end);
 double	average_time(const char *fname, double time);
-void	print_averages(void); */
+void	print_averages(void);
 
 /* raycasting.c */
 t_coord	get_case(t_coord vector, t_coord point, int p);
 void	raycasting(t_cubdata *cub);
-/* void	new_raycasting(t_cubdata *cub); */
+void	new_raycasting(t_cubdata *cub);
 
 #endif

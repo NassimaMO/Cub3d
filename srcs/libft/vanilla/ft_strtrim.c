@@ -21,8 +21,6 @@ static int	char_in_set(const char *set, char c)
 	{
 		if ((unsigned char)c == (unsigned char)set[i])
 			return (1);
-		if (ft_isspace((unsigned char)c))
-			return (1);
 		i++;
 	}
 	return (0);
