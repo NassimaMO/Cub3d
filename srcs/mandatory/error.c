@@ -24,7 +24,7 @@ int	print_errors(int n)
 	else if (n == ERR_MEMORY && !error)
 		error = (ft_printf("Error\nMemory issue.\n"), 1);
 	else if (n < 0 && !error)
-		error = (ft_printf("Error.\n"), 1);
+		error = (ft_printf("Error\n"), 1);
 	return (n);
 }
 

@@ -92,7 +92,7 @@ int	parse_info(char *path, t_cubdata *cub)
 			f = parse_map_char;
 		line = (free(line), gnl_trim(fd, " \t\v\f\n\r"));
 	}
-	return (close(fd), -parse);
+	return (close(fd), parse * ERR_PARSING);
 }
 
 int	parse_map_walls(t_map *map)

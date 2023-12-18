@@ -64,7 +64,7 @@ RM						=	rm -f
 
 all						:		$(NAME)
 
-bonus					:		$(NAME_BONUS)
+bonus					:		$(NAME)
 
 $(OBJS_DIR)/%.o			:		$(MANDATORY_DIR)/%.c ${INC_DIR}/${INC}
 							@mkdir -p $(OBJS_DIR)
