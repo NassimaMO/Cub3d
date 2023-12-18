@@ -116,6 +116,7 @@ fclean					:		clean
 							@$(RM) $(LIBFT)
 							@$(RM) $(LIBMLX)
 							@$(RM) $(LIBMLX_UTILS)
+							@$(RM) $(GENERATOR_DIR)/generator
 							
 
 re						:		fclean

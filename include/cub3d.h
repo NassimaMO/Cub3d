@@ -33,9 +33,10 @@
 # define ERR_PARSING -4
 
 # define MAIN 1
-# define FOV 90
+# define FOV 70
 # define WALL 1
 # define SENS 0.174532925
+# define SPEED 0.4
 
 # define EPSILON 10e-5
 

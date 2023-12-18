@@ -56,7 +56,7 @@ static void	init_p(t_cubdata *cub, int i, int j, char c)
 	cub->player.pos.x = j + 0.5;
 	cub->player.pos.y = i + 0.5;
 	cub->player.pos.z = 0.5;
-	cub->player.speed = 0.25;
+	cub->player.speed = SPEED;
 }
 
 /* fills map tab with file data ; should be called after fill_data */
